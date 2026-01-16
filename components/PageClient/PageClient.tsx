@@ -62,6 +62,7 @@ export function PageClient() {
           onBriefChange={setBrief}
           selectedPlan={selectedPlan}
           onSelectPlan={onSelectPlan}
+          onOpenCheckout={openCheckout}
         />
       </main>
 

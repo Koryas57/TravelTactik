@@ -17,18 +17,20 @@ function formatRangeEUR(center: number) {
   return `${low}–${high}€`;
 }
 
+type Plan = {
+  id: ComfortLevel;
+  title: string;
+  tag: string;
+  price: string;
+  bullets: string[];
+  accent: "eco" | "comfort" | "premium";
+};
+
 export function OfferCards({ brief, selectedPlan, onSelectPlan }: Props) {
   const base = clamp(brief.budgetMax, 200, 4000);
   const premiumFactor = brief.avoidLayovers ? 1.12 : 1.05;
 
-  const plans: ReadonlyArray<{
-    id: ComfortLevel;
-    title: string;
-    tag: string;
-    price: string;
-    bullets: readonly string[];
-    accent: ComfortLevel;
-  }> = [
+  const plans: readonly Plan[] = [
     {
       id: "eco",
       title: "Plan Éco",
@@ -103,6 +105,7 @@ export function OfferCards({ brief, selectedPlan, onSelectPlan }: Props) {
               className={`${styles.card} ${styles[p.accent]} ${
                 isSelected ? styles.selected : ""
               }`}
+              aria-label={p.title}
             >
               <div className={styles.cardTop}>
                 <div>

@@ -17,7 +17,7 @@ export function Header({ onCtaClick }: Props) {
           </div>
 
           <nav className={styles.nav} aria-label="Navigation principale">
-            <a href="#offres">Offres</a>
+            <a href="#scenarios">Offres</a>
             <a href="#preuves">Preuves</a>
             <a href="#cote-bleue">Côte Bleue</a>
 
