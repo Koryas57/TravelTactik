@@ -44,6 +44,8 @@ export function CheckoutDrawer({ open, onClose, brief, selectedPlan }: Props) {
   const [pack, setPack] = useState<ServicePack>("itinerary");
   const [speed, setSpeed] = useState<DeliverySpeed>("standard");
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // reset success when re-open
   useEffect(() => {
@@ -94,13 +96,15 @@ export function CheckoutDrawer({ open, onClose, brief, selectedPlan }: Props) {
     return base + urgentFee;
   }, [pack, speed]);
 
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setError(null);
 
     const fd = new FormData(e.currentTarget);
+
     const payload = {
-      email: String(fd.get("email") || ""),
-      notes: String(fd.get("notes") || ""),
+      email: String(fd.get("email") || "").trim(),
+      notes: String(fd.get("notes") || "").trim(),
       pack,
       speed,
       priceEUR: price,
@@ -109,11 +113,28 @@ export function CheckoutDrawer({ open, onClose, brief, selectedPlan }: Props) {
       createdAt: new Date().toISOString(),
     };
 
-    // MVP: simulate sending. Later: API route / email / notion / google sheet.
-    // eslint-disable-next-line no-console
-    console.log("[Traveltactik] lead payload:", payload);
+    try {
+      setSending(true);
 
-    setSent(true);
+      const res = await fetch("/api/lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = (await res.json()) as { ok: boolean; error?: string };
+
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || "Erreur serveur");
+      }
+
+      setSent(true);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Erreur inconnue";
+      setError(msg);
+    } finally {
+      setSending(false);
+    }
   }
 
   if (!open) return null;
@@ -205,6 +226,7 @@ export function CheckoutDrawer({ open, onClose, brief, selectedPlan }: Props) {
         ) : (
           <form className={styles.form} onSubmit={onSubmit}>
             <div className={styles.blockTitle}>Choisis ton pack</div>
+            {error ? <div className={styles.error}>{error}</div> : null}
 
             <div className={styles.packs}>
               {(["audit", "itinerary", "concierge"] as const).map((p) => {
@@ -284,8 +306,12 @@ export function CheckoutDrawer({ open, onClose, brief, selectedPlan }: Props) {
             </div>
 
             <div className={styles.actions}>
-              <button className={styles.primary} type="submit">
-                Envoyer mon brief
+              <button
+                className={styles.primary}
+                type="submit"
+                disabled={sending}
+              >
+                {sending ? "Envoi..." : "Envoyer ma demande"}
               </button>
               <button
                 className={styles.secondary}
