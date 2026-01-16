@@ -1,5 +1,5 @@
 import { Header } from "../components/Header/Header";
-import { SearchBox } from "../components/SearchBox/SearchBox";
+import { HomeClient } from "../components/Home/HomeClient";
 
 export default function Home() {
   return (
@@ -12,22 +12,7 @@ export default function Home() {
           Tu réserves. Je t’aide à optimiser budget, confort et itinéraire.
         </p>
 
-        <section id="brief" style={{ marginTop: 28 }}>
-          <div
-            style={{
-              background: "var(--tt-card)",
-              border: "1px solid var(--tt-border)",
-              borderRadius: "var(--tt-radius-md)",
-              padding: 16,
-              boxShadow: "var(--tt-shadow)",
-            }}
-          >
-            <section id="brief" style={{ marginTop: 28 }}>
-              <SearchBox />
-            </section>
-
-          </div>
-        </section>
+        <HomeClient />
       </main>
     </>
   );

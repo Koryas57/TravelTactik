@@ -1,54 +1,34 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import styles from "./SearchBox.module.scss";
+import type { TripBrief } from "../tripBrief";
+import { comfortLabels } from "../tripBrief";
 
-type ComfortLevel = "eco" | "comfort" | "premium";
-
-type TripBrief = {
-  destination: string;
-  durationDays: number;
-  travelers: number;
-  comfort: ComfortLevel;
-  budgetMax: number;
-  avoidLayovers: boolean;
+type Props = {
+  value: TripBrief;
+  onChange: (next: TripBrief) => void;
 };
 
-const comfortLabels: Record<ComfortLevel, string> = {
-  eco: "Éco",
-  comfort: "Confort",
-  premium: "Premium",
-};
-
-export function SearchBox() {
-  const [brief, setBrief] = useState<TripBrief>({
-    destination: "",
-    durationDays: 7,
-    travelers: 2,
-    comfort: "comfort",
-    budgetMax: 1200,
-    avoidLayovers: true,
-  });
-
+export function SearchBox({ value, onChange }: Props) {
   const summary = useMemo(() => {
-    const dest = brief.destination.trim()
-      ? brief.destination.trim()
+    const dest = value.destination.trim()
+      ? value.destination.trim()
       : "Destination flexible";
-    const layovers = brief.avoidLayovers
+    const layovers = value.avoidLayovers
       ? "sans escales (si possible)"
       : "escales OK";
-    return `${dest} • ${brief.durationDays} j • ${brief.travelers} pers • ${
-      comfortLabels[brief.comfort]
-    } • ≤ ${brief.budgetMax}€ • ${layovers}`;
-  }, [brief]);
+    return `${dest} • ${value.durationDays} j • ${value.travelers} pers • ${
+      comfortLabels[value.comfort]
+    } • ≤ ${value.budgetMax}€ • ${layovers}`;
+  }, [value]);
 
-  function set<K extends keyof TripBrief>(key: K, value: TripBrief[K]) {
-    setBrief((prev) => ({ ...prev, [key]: value }));
+  function set<K extends keyof TripBrief>(key: K, v: TripBrief[K]) {
+    onChange({ ...value, [key]: v });
   }
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // MVP: pas de backend. On garde local + on scroll vers les scénarios.
     const el = document.getElementById("scenarios");
     el?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
@@ -76,7 +56,7 @@ export function SearchBox() {
               id="destination"
               className={styles.input}
               placeholder="Bangkok, Lisbonne, Tokyo… (ou laisse vide)"
-              value={brief.destination}
+              value={value.destination}
               onChange={(e) => set("destination", e.target.value)}
               autoComplete="off"
             />
@@ -92,7 +72,7 @@ export function SearchBox() {
               type="number"
               min={2}
               max={30}
-              value={brief.durationDays}
+              value={value.durationDays}
               onChange={(e) => set("durationDays", Number(e.target.value || 0))}
             />
           </div>
@@ -107,7 +87,7 @@ export function SearchBox() {
               type="number"
               min={1}
               max={10}
-              value={brief.travelers}
+              value={value.travelers}
               onChange={(e) => set("travelers", Number(e.target.value || 0))}
             />
           </div>
@@ -120,7 +100,7 @@ export function SearchBox() {
               aria-label="Niveau de confort"
             >
               {(["eco", "comfort", "premium"] as const).map((level) => {
-                const active = brief.comfort === level;
+                const active = value.comfort === level;
                 return (
                   <button
                     key={level}
@@ -151,14 +131,14 @@ export function SearchBox() {
                 min={200}
                 max={4000}
                 step={50}
-                value={brief.budgetMax}
+                value={value.budgetMax}
                 onChange={(e) => set("budgetMax", Number(e.target.value))}
               />
               <div
                 className={styles.pill}
-                aria-label={`Budget maximum ${brief.budgetMax} euros`}
+                aria-label={`Budget maximum ${value.budgetMax} euros`}
               >
-                ≤ {brief.budgetMax}€
+                ≤ {value.budgetMax}€
               </div>
             </div>
           </div>
@@ -167,7 +147,7 @@ export function SearchBox() {
             <label className={styles.check}>
               <input
                 type="checkbox"
-                checked={brief.avoidLayovers}
+                checked={value.avoidLayovers}
                 onChange={(e) => set("avoidLayovers", e.target.checked)}
               />
               <span>Éviter les escales (si possible)</span>
