@@ -1,8 +1,10 @@
 import styles from "./OfferCards.module.scss";
-import type { TripBrief } from "../tripBrief";
+import type { TripBrief, ComfortLevel } from "../tripBrief";
 
 type Props = {
   brief: TripBrief;
+  selectedPlan: ComfortLevel | null;
+  onSelectPlan: (plan: ComfortLevel) => void;
 };
 
 function clamp(n: number, min: number, max: number) {
@@ -15,12 +17,18 @@ function formatRangeEUR(center: number) {
   return `${low}–${high}€`;
 }
 
-export function OfferCards({ brief }: Props) {
+export function OfferCards({ brief, selectedPlan, onSelectPlan }: Props) {
   const base = clamp(brief.budgetMax, 200, 4000);
-
   const premiumFactor = brief.avoidLayovers ? 1.12 : 1.05;
 
-  const plans = [
+  const plans: ReadonlyArray<{
+    id: ComfortLevel;
+    title: string;
+    tag: string;
+    price: string;
+    bullets: readonly string[];
+    accent: ComfortLevel;
+  }> = [
     {
       id: "eco",
       title: "Plan Éco",
@@ -61,7 +69,7 @@ export function OfferCards({ brief }: Props) {
       ],
       accent: "premium",
     },
-  ] as const;
+  ];
 
   const dest = brief.destination.trim()
     ? brief.destination.trim()
@@ -86,37 +94,52 @@ export function OfferCards({ brief }: Props) {
       </div>
 
       <div className={styles.grid}>
-        {plans.map((p) => (
-          <article key={p.id} className={`${styles.card} ${styles[p.accent]}`}>
-            <div className={styles.cardTop}>
-              <div>
-                <div className={styles.badge}>{p.tag}</div>
-                <div className={styles.cardTitle}>{p.title}</div>
+        {plans.map((p) => {
+          const isSelected = selectedPlan === p.id;
+
+          return (
+            <article
+              key={p.id}
+              className={`${styles.card} ${styles[p.accent]} ${
+                isSelected ? styles.selected : ""
+              }`}
+            >
+              <div className={styles.cardTop}>
+                <div>
+                  <div className={styles.badge}>{p.tag}</div>
+                  <div className={styles.cardTitle}>{p.title}</div>
+                </div>
+
+                <div className={styles.price}>
+                  <div className={styles.priceLabel}>Objectif</div>
+                  <div className={styles.priceValue}>{p.price}</div>
+                  <div className={styles.priceHint}>€/personne</div>
+                </div>
               </div>
 
-              <div className={styles.price}>
-                <div className={styles.priceLabel}>Objectif</div>
-                <div className={styles.priceValue}>{p.price}</div>
-                <div className={styles.priceHint}>€/personne</div>
+              <ul className={styles.list}>
+                {p.bullets.map((b) => (
+                  <li key={b}>{b}</li>
+                ))}
+              </ul>
+
+              <div className={styles.actions}>
+                <button
+                  type="button"
+                  className={styles.primary}
+                  onClick={() => onSelectPlan(p.id)}
+                  disabled={isSelected}
+                >
+                  {isSelected ? "Plan sélectionné" : "Choisir ce plan"}
+                </button>
+
+                <a className={styles.secondary} href="#offres">
+                  Voir détails
+                </a>
               </div>
-            </div>
-
-            <ul className={styles.list}>
-              {p.bullets.map((b) => (
-                <li key={b}>{b}</li>
-              ))}
-            </ul>
-
-            <div className={styles.actions}>
-              <a className={styles.primary} href="#brief">
-                Choisir ce plan
-              </a>
-              <a className={styles.secondary} href="#offres">
-                Voir détails
-              </a>
-            </div>
-          </article>
-        ))}
+            </article>
+          );
+        })}
       </div>
     </section>
   );

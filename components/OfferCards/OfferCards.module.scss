@@ -155,6 +155,18 @@
   border-color: rgba(30, 64, 255, 0.2);
 }
 
+.selected {
+  border-color: rgba(30, 64, 255, 0.45);
+  box-shadow: 0 14px 34px rgba(2, 6, 23, 0.1);
+  transform: translateY(-2px);
+}
+
+.primary:disabled {
+  cursor: default;
+  opacity: 0.35;
+  filter: none;
+}
+
 .secondary {
   background: #fff;
   color: var(--tt-text);

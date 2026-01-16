@@ -1,6 +1,12 @@
+"use client";
+
 import styles from "./Header.module.scss";
 
-export function Header() {
+type Props = {
+  onCtaClick?: () => void;
+};
+
+export function Header({ onCtaClick }: Props) {
   return (
     <header className={styles.header}>
       <div className="container">
@@ -14,9 +20,10 @@ export function Header() {
             <a href="#offres">Offres</a>
             <a href="#preuves">Preuves</a>
             <a href="#cote-bleue">Côte Bleue</a>
-            <a href="#brief" className={styles.cta}>
+
+            <button type="button" className={styles.cta} onClick={onCtaClick}>
               Obtenir mon plan
-            </a>
+            </button>
           </nav>
         </div>
       </div>
