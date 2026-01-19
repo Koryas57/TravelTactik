@@ -19,6 +19,11 @@ type LeadPayload = {
   brief: TripBrief;
   selectedPlan: ComfortLevel | null;
   createdAt: string;
+
+  // anti-abus
+  hp?: string; // honeypot (doit être vide)
+  ts?: number; // timestamp ouverture drawer (ms epoch)
+  page?: string;
 };
 
 function isEmail(value: string) {
@@ -66,6 +71,59 @@ function parseClientDate(value: string): string {
   return d.toISOString();
 }
 
+// IP côté Vercel (x-forwarded-for)
+function getClientIp(req: Request): string {
+  const xff = req.headers.get("x-forwarded-for");
+  if (xff) return xff.split(",")[0].trim();
+  const realIp = req.headers.get("x-real-ip");
+  if (realIp) return realIp.trim();
+  return "0.0.0.0";
+}
+
+/**
+ * Rate limit MVP (en mémoire).
+ * Limitation: en serverless, c'est "best effort" (par instance). Suffisant pour MVP.
+ */
+type Bucket = { count: number; resetAt: number };
+const RL_WINDOW_MS = 10 * 60 * 1000; // 10 min
+const RL_MAX_PER_IP = 12; // 12 requêtes / 10 min / IP
+const RL_MAX_PER_EMAIL = 6; // 6 requêtes / 10 min / email (anti-spam ciblé)
+
+const ipBuckets = new Map<string, Bucket>();
+const emailBuckets = new Map<string, Bucket>();
+
+function hitBucket(
+  map: Map<string, Bucket>,
+  key: string,
+  max: number,
+): boolean {
+  const now = Date.now();
+  const b = map.get(key);
+
+  if (!b || now > b.resetAt) {
+    map.set(key, { count: 1, resetAt: now + RL_WINDOW_MS });
+    return true;
+  }
+
+  if (b.count >= max) return false;
+  b.count += 1;
+  map.set(key, b);
+  return true;
+}
+
+// Validation “humain” basique: le form doit être ouvert depuis au moins X ms
+function validateHumanTiming(ts?: number) {
+  if (!ts || typeof ts !== "number") throw new Error("Missing form timestamp");
+  const now = Date.now();
+  const age = now - ts;
+
+  // Trop rapide -> bot probable
+  if (age < 1200) throw new Error("Too fast");
+
+  // Trop vieux -> payload obsolète / replay
+  if (age > 2 * 60 * 60 * 1000) throw new Error("Expired form");
+}
+
 export async function POST(req: Request) {
   let body: LeadPayload;
 
@@ -78,8 +136,39 @@ export async function POST(req: Request) {
     );
   }
 
-  // Validation minimale MVP
-  if (!isEmail(body.email)) {
+  // Honeypot (si rempli => bot)
+  if (body.hp && String(body.hp).trim().length > 0) {
+    // Réponse neutre pour ne pas aider un bot
+    return NextResponse.json({ ok: true }, { status: 200 });
+  }
+
+  // Timing anti-bot
+  try {
+    validateHumanTiming(body.ts);
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "Invalid timing";
+    return NextResponse.json({ ok: false, error: msg }, { status: 400 });
+  }
+
+  // Rate limit
+  const ip = getClientIp(req);
+  const emailLower = (body.email || "").toLowerCase().trim();
+
+  if (!hitBucket(ipBuckets, ip, RL_MAX_PER_IP)) {
+    return NextResponse.json(
+      { ok: false, error: "Too many requests (ip)" },
+      { status: 429 },
+    );
+  }
+  if (emailLower && !hitBucket(emailBuckets, emailLower, RL_MAX_PER_EMAIL)) {
+    return NextResponse.json(
+      { ok: false, error: "Too many requests (email)" },
+      { status: 429 },
+    );
+  }
+
+  // Validation minimale MVP (+ quelques gardes anti-abus)
+  if (!isEmail(emailLower) || emailLower.length > 254) {
     return NextResponse.json(
       { ok: false, error: "Invalid email" },
       { status: 400 },
@@ -110,30 +199,56 @@ export async function POST(req: Request) {
     );
   }
 
+  const notes = (body.notes ?? "").toString();
+  if (notes.length > 5000) {
+    return NextResponse.json(
+      { ok: false, error: "Notes too long" },
+      { status: 400 },
+    );
+  }
+
   const ua = req.headers.get("user-agent") ?? null;
 
   // Log utile (avant DB)
   console.log("[Traveltactik] Lead received:", {
-    email: body.email,
+    ip,
+    email: emailLower,
     pack: body.pack,
     speed: body.speed,
     priceEUR: body.priceEUR,
     selectedPlan: body.selectedPlan,
     destination: body.brief?.destination,
-    durationDays: body.brief?.durationDays,
-    travelers: body.brief?.travelers,
-    budgetMax: body.brief?.budgetMax,
-    avoidLayovers: body.brief?.avoidLayovers,
     createdAt: body.createdAt,
-    hasResendKey: Boolean(process.env.RESEND_API_KEY),
-    resendFrom: process.env.RESEND_FROM,
-    notificationEmail: process.env.LEADS_NOTIFICATION_EMAIL,
+    page: body.page,
   });
 
   try {
     const sql = getSql();
-
     const createdAtISO = parseClientDate(body.createdAt);
+
+    // Déduplication courte (évite double clic / refresh / spam léger)
+    // Critère: même email + pack + destination, dans les 5 dernières minutes.
+    const dest = String(body.brief?.destination ?? "").trim();
+
+    const dedupeRows = await sql`
+      select id
+      from leads
+      where email = ${emailLower}
+        and pack = ${body.pack}
+        and (brief->>'destination') = ${dest}
+        and client_created_at > (now() - interval '5 minutes')
+      order by client_created_at desc
+      limit 1;
+    `;
+
+    const existingId = dedupeRows?.[0]?.id;
+    if (existingId) {
+      console.log("[Traveltactik] deduped lead:", { existingId });
+      return NextResponse.json(
+        { ok: true, leadId: existingId, deduped: true },
+        { status: 200 },
+      );
+    }
 
     // INSERT + retour de l'id
     const rows = await sql`
@@ -149,8 +264,8 @@ export async function POST(req: Request) {
         user_agent
       )
       values (
-        ${body.email},
-        ${body.notes ?? ""},
+        ${emailLower},
+        ${notes},
         ${body.pack},
         ${body.speed},
         ${body.priceEUR},
@@ -167,16 +282,9 @@ export async function POST(req: Request) {
 
     console.log("[Traveltactik] Lead inserted:", { leadId });
 
-    // Emails (log avant / après) + timeout
-    console.log("[Traveltactik] before sendLeadEmails", {
-      leadId: String(leadId),
-      to: body.email,
-      from: process.env.RESEND_FROM,
-      notify: process.env.LEADS_NOTIFICATION_EMAIL,
-    });
-
+    // Emails + timeout
     const emailResult = await withTimeout(
-      sendLeadEmails(String(leadId), body),
+      sendLeadEmails(String(leadId), { ...body, email: emailLower, notes }),
       15000,
       "sendLeadEmails",
     );
@@ -187,7 +295,6 @@ export async function POST(req: Request) {
   } catch (err) {
     console.error("[Traveltactik] /api/lead error:", err);
 
-    // Remonte une erreur plus explicite en dev
     const message =
       err instanceof Error
         ? err.message

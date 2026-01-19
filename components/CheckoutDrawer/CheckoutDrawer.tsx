@@ -47,9 +47,16 @@ export function CheckoutDrawer({ open, onClose, brief, selectedPlan }: Props) {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Anti-spam simple: timestamp "ouverture du drawer" (utilisé côté API)
+  const openedAtRef = useRef<number>(Date.now());
+
   // reset success when re-open
   useEffect(() => {
-    if (open) setSent(false);
+    if (open) {
+      setSent(false);
+      setError(null);
+      openedAtRef.current = Date.now();
+    }
   }, [open]);
 
   // ESC closes
@@ -68,7 +75,7 @@ export function CheckoutDrawer({ open, onClose, brief, selectedPlan }: Props) {
   useEffect(() => {
     if (!open) return;
     const el = panelRef.current?.querySelector<HTMLInputElement>(
-      'input[name="email"]'
+      'input[name="email"]',
     );
     el?.focus();
   }, [open]);
@@ -111,6 +118,11 @@ export function CheckoutDrawer({ open, onClose, brief, selectedPlan }: Props) {
       brief,
       selectedPlan,
       createdAt: new Date().toISOString(),
+
+      // anti-bot: honeypot + timestamp d'ouverture + page
+      hp: String(fd.get("company") || "").trim(), // honeypot
+      ts: openedAtRef.current, // ms epoch
+      page: typeof window !== "undefined" ? window.location.href : undefined,
     };
 
     try {
@@ -122,7 +134,10 @@ export function CheckoutDrawer({ open, onClose, brief, selectedPlan }: Props) {
         body: JSON.stringify(payload),
       });
 
-      const data = (await res.json()) as { ok: boolean; error?: string };
+      const data = (await res.json()) as {
+        ok: boolean;
+        error?: string;
+      };
 
       if (!res.ok || !data.ok) {
         throw new Error(data.error || "Erreur serveur");
@@ -219,14 +234,35 @@ export function CheckoutDrawer({ open, onClose, brief, selectedPlan }: Props) {
             </div>
 
             <div className={styles.legal}>
-              MVP: l’envoi est simulé (console). On branchera l’envoi réel
-              ensuite.
+              Envoi confirmé par email. Pense à vérifier tes spams si besoin.
             </div>
           </div>
         ) : (
           <form className={styles.form} onSubmit={onSubmit}>
             <div className={styles.blockTitle}>Choisis ton pack</div>
             {error ? <div className={styles.error}>{error}</div> : null}
+
+            {/* Honeypot (anti-bot) : doit rester vide */}
+            <div
+              aria-hidden="true"
+              style={{
+                position: "absolute",
+                left: "-10000px",
+                width: "1px",
+                height: "1px",
+                overflow: "hidden",
+              }}
+            >
+              <label htmlFor="company">Company</label>
+              <input
+                id="company"
+                name="company"
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+                defaultValue=""
+              />
+            </div>
 
             <div className={styles.packs}>
               {(["audit", "itinerary", "concierge"] as const).map((p) => {
@@ -235,9 +271,7 @@ export function CheckoutDrawer({ open, onClose, brief, selectedPlan }: Props) {
                   <button
                     key={p}
                     type="button"
-                    className={`${styles.pack} ${
-                      active ? styles.packActive : ""
-                    }`}
+                    className={`${styles.pack} ${active ? styles.packActive : ""}`}
                     onClick={() => setPack(p)}
                     aria-pressed={active}
                   >
@@ -260,9 +294,7 @@ export function CheckoutDrawer({ open, onClose, brief, selectedPlan }: Props) {
                   <button
                     key={s}
                     type="button"
-                    className={`${styles.speed} ${
-                      active ? styles.speedActive : ""
-                    }`}
+                    className={`${styles.speed} ${active ? styles.speedActive : ""}`}
                     onClick={() => setSpeed(s)}
                     aria-pressed={active}
                   >
@@ -284,6 +316,7 @@ export function CheckoutDrawer({ open, onClose, brief, selectedPlan }: Props) {
                 type="email"
                 placeholder="ton@email.com"
                 required
+                autoComplete="email"
               />
             </div>
 
@@ -323,8 +356,7 @@ export function CheckoutDrawer({ open, onClose, brief, selectedPlan }: Props) {
             </div>
 
             <div className={styles.legal}>
-              Paiement & réservation : étape suivante. Pour l’instant, on valide
-              ton brief et le pack.
+              En envoyant, tu acceptes d’être recontacté au sujet de ta demande.
             </div>
           </form>
         )}

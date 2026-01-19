@@ -17,5 +17,14 @@ create table if not exists leads (
   created_at timestamptz not null default now()
 );
 
+-- Existing indexes
 create index if not exists leads_created_at_idx on leads (created_at desc);
 create index if not exists leads_email_idx on leads (email);
+
+-- Recommended: supports dedupe query (email + pack + destination + recent client_created_at)
+create index if not exists leads_dedupe_idx
+on leads (email, pack, (brief->>'destination'), client_created_at desc);
+
+-- Optional: useful if you list by client-submitted time
+create index if not exists leads_client_created_at_idx
+on leads (client_created_at desc);
