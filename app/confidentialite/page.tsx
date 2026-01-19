@@ -1,8 +1,8 @@
+import { LegalLayout } from "../../components/Legal/LegalLayout";
+
 export default function ConfidentialitePage() {
   return (
-    <main style={{ maxWidth: 900, margin: "0 auto", padding: "32px 16px" }}>
-      <h1>Politique de confidentialité</h1>
-
+    <LegalLayout title="Politique de confidentialité">
       <p>
         Cette politique explique quelles données sont collectées via
         TravelTactik, pourquoi, et comment exercer vos droits.
@@ -32,8 +32,8 @@ export default function ConfidentialitePage() {
       <h2>Durée de conservation</h2>
       <p>
         Les données sont conservées le temps nécessaire au traitement de la
-        demande, puis archivées/supprimées dans un délai raisonnable (ex : 12
-        mois) sauf obligation légale ou relation contractuelle.
+        demande, puis supprimées/archivées dans un délai raisonnable (par
+        exemple 12 mois), sauf obligation légale ou relation contractuelle.
       </p>
 
       <h2>Sous-traitants</h2>
@@ -49,6 +49,6 @@ export default function ConfidentialitePage() {
         données en écrivant à{" "}
         <a href="mailto:traveltactik@gmail.com">traveltactik@gmail.com</a>.
       </p>
-    </main>
+    </LegalLayout>
   );
 }
