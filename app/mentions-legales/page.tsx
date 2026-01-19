@@ -14,7 +14,7 @@ export default function MentionsLegalesPage() {
       <p>
         TravelTactik
         <br />
-        Contact :{" Agent TravelTactik "}
+        Contact :{" "}
         <a href="mailto:traveltactik@gmail.com">traveltactik@gmail.com</a>
       </p>
 
@@ -23,15 +23,16 @@ export default function MentionsLegalesPage() {
 
       <h2>Propriété intellectuelle</h2>
       <p>
-        Les contenus (textes, structure, marque) sont protégés. Toute
-        reproduction non autorisée est interdite.
+        Les contenus (textes, structure, identité de marque) sont protégés.
+        Toute reproduction non autorisée est interdite.
       </p>
 
       <h2>Responsabilité</h2>
       <p>
-        Les recommandations sont fournies selon les informations transmises par
-        l’utilisateur. L’utilisateur reste responsable de ses réservations, et
-        des vérifications nécessaires (documents, visa, santé, assurances).
+        Les recommandations sont fournies sur la base des informations
+        transmises par l’utilisateur. L’utilisateur reste responsable de ses
+        réservations et des vérifications nécessaires (documents, visa, santé,
+        assurances, conditions des prestataires, etc.).
       </p>
     </LegalLayout>
   );
