@@ -12,6 +12,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 14px;
 }
 
 .brand {
@@ -20,6 +21,14 @@
   gap: 10px;
   font-weight: 800;
   letter-spacing: 0.2px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.brand:focus-visible {
+  outline: 2px solid rgba(0, 0, 0, 0.35);
+  outline-offset: 4px;
+  border-radius: 10px;
 }
 
 .logoDot {
@@ -39,7 +48,32 @@
   align-items: center;
   gap: 18px;
   font-weight: 600;
+}
+
+.link {
   color: var(--tt-muted);
+  text-decoration: none;
+  padding: 8px 10px;
+  border-radius: 999px;
+  transition:
+    background 120ms ease,
+    color 120ms ease;
+}
+
+.link:hover {
+  color: var(--tt-text);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.link:focus-visible {
+  outline: 2px solid rgba(0, 0, 0, 0.35);
+  outline-offset: 3px;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .cta {
@@ -47,6 +81,55 @@
   border-radius: 999px;
   background: var(--tt-blue);
   color: #fff;
+  font-weight: 700;
+  border: 0;
+  cursor: pointer;
+  transition:
+    transform 120ms ease,
+    filter 120ms ease,
+    opacity 120ms ease;
+  white-space: nowrap;
+}
+
+.cta:hover {
+  filter: brightness(0.98);
+  transform: translateY(-1px);
+}
+
+.cta:active {
+  transform: translateY(0);
+}
+
+.cta:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.cta:focus-visible {
+  outline: 2px solid rgba(0, 0, 0, 0.35);
+  outline-offset: 3px;
+}
+
+.back {
+  color: var(--tt-text);
+  text-decoration: none;
+  font-weight: 700;
+  padding: 10px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--tt-border);
+  background: rgba(255, 255, 255, 0.6);
+  white-space: nowrap;
+  transition: background 120ms ease;
+}
+
+.back:hover {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.back:focus-visible {
+  outline: 2px solid rgba(0, 0, 0, 0.35);
+  outline-offset: 3px;
 }
 
 @media (min-width: 860px) {
