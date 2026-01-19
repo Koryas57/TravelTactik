@@ -1,45 +1,5 @@
-.legalHeader {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(0, 0, 0, 0.35);
-}
-
-.legalHeaderInner {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 14px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.brand {
-  font-weight: 700;
-  letter-spacing: 0.2px;
-  text-decoration: none;
-}
-
-.nav {
-  display: flex;
-  gap: 14px;
-}
-
-.navLink {
-  font-size: 14px;
-  opacity: 0.85;
-  text-decoration: none;
-}
-
-.navLink:hover {
-  opacity: 1;
-  text-decoration: underline;
-}
-
 .legalMain {
-  padding: 32px 16px;
+  padding: 34px 16px 56px;
 }
 
 .legalContainer {
@@ -54,11 +14,11 @@
 .content {
   display: grid;
   gap: 14px;
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 .content h2 {
-  margin: 14px 0 4px 0;
+  margin: 18px 0 6px 0;
 }
 
 .content ul {

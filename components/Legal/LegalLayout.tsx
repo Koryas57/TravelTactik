@@ -1,4 +1,4 @@
-import { LegalHeader } from "./LegalHeader";
+import { Header } from "../Header/Header";
 import styles from "./Legal.module.scss";
 
 type Props = {
@@ -9,7 +9,7 @@ type Props = {
 export function LegalLayout({ title, children }: Props) {
   return (
     <>
-      <LegalHeader />
+      <Header showCta={false} />
       <main className={styles.legalMain}>
         <div className={styles.legalContainer}>
           <h1 className={styles.h1}>{title}</h1>

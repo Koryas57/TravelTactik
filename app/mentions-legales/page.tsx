@@ -14,7 +14,7 @@ export default function MentionsLegalesPage() {
       <p>
         TravelTactik
         <br />
-        Contact :{" "}
+        Contact :{" Agent TravelTactik "}
         <a href="mailto:traveltactik@gmail.com">traveltactik@gmail.com</a>
       </p>
 
