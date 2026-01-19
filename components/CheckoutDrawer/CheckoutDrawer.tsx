@@ -128,7 +128,7 @@ export function CheckoutDrawer({ open, onClose, brief, selectedPlan }: Props) {
     try {
       setSending(true);
 
-      const res = await fetch("/api/lead", {
+      const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -136,14 +136,16 @@ export function CheckoutDrawer({ open, onClose, brief, selectedPlan }: Props) {
 
       const data = (await res.json()) as {
         ok: boolean;
+        url?: string;
         error?: string;
       };
 
-      if (!res.ok || !data.ok) {
+      if (!res.ok || !data.ok || !data.url) {
         throw new Error(data.error || "Erreur serveur");
       }
 
-      setSent(true);
+      window.location.assign(data.url);
+      return; // stop ici
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Erreur inconnue";
       setError(msg);
