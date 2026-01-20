@@ -3,7 +3,7 @@ export const runtime = "nodejs";
 
 import Link from "next/link";
 import { Header } from "../../../components/Header/Header";
-import styles from "../paiement.module.scss";
+import styles from "../../paiement.module.scss";
 
 import { getStripe } from "../../../lib/stripe";
 import { getSql } from "../../../lib/db";

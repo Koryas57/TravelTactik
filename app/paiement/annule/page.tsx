@@ -1,7 +1,7 @@
 // app/paiement/annule/page.tsx
 import Link from "next/link";
 import { Header } from "../../../components/Header/Header";
-import styles from "../paiement.module.scss";
+import styles from "../../paiement.module.scss";
 
 type PageProps = {
   searchParams?: { lead_id?: string };
