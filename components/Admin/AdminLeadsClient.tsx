@@ -20,6 +20,7 @@ type LeadRow = {
 export function AdminLeadsClient() {
   const [rows, setRows] = useState<LeadRow[]>([]);
   const [loading, setLoading] = useState(false);
+  const [actionId, setActionId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const [status, setStatus] = useState<string>(""); // "" | paid | pending
@@ -57,16 +58,30 @@ export function AdminLeadsClient() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [qs]);
 
-  async function markHandled(id: string) {
+  async function toggleHandled(id: string) {
     try {
+      setActionId(id);
+      setError(null);
+
       const res = await fetch(`/api/admin/leads/${id}/handled`, {
         method: "POST",
+        cache: "no-store",
       });
-      const data = (await res.json()) as { ok: boolean; error?: string };
+
+      const data = (await res.json()) as {
+        ok: boolean;
+        error?: string;
+      };
+
       if (!res.ok || !data.ok) throw new Error(data.error || "Erreur serveur");
+
       await load();
     } catch (e) {
-      alert(e instanceof Error ? e.message : "Erreur inconnue");
+      const msg = e instanceof Error ? e.message : "Erreur inconnue";
+      setError(msg);
+      alert(msg);
+    } finally {
+      setActionId(null);
     }
   }
 
@@ -125,6 +140,9 @@ export function AdminLeadsClient() {
           <tbody>
             {rows.map((r) => {
               const destination = r.brief?.destination || "Flexible";
+              const isActing = actionId === r.id;
+              const btnLabel = r.handled ? "Annuler traité" : "Marquer traité";
+
               return (
                 <tr key={r.id}>
                   <td>{new Date(r.created_at).toLocaleString()}</td>
@@ -136,16 +154,18 @@ export function AdminLeadsClient() {
                   <td>{r.payment_status || "—"}</td>
                   <td>{r.handled ? "Oui" : "Non"}</td>
                   <td>
-                    {!r.handled ? (
-                      <button
-                        className={styles.smallBtn}
-                        onClick={() => markHandled(r.id)}
-                      >
-                        Marquer traité
-                      </button>
-                    ) : (
-                      <span className={styles.muted}>—</span>
-                    )}
+                    <button
+                      className={styles.smallBtn}
+                      onClick={() => toggleHandled(r.id)}
+                      disabled={isActing}
+                      title={
+                        r.handled
+                          ? "Repasser en non traité"
+                          : "Marquer comme traité"
+                      }
+                    >
+                      {isActing ? "..." : btnLabel}
+                    </button>
                   </td>
                 </tr>
               );
