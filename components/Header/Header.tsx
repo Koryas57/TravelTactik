@@ -5,11 +5,17 @@ import styles from "./Header.module.scss";
 
 type Props = {
   onCtaClick?: () => void;
+  showNav?: boolean; // par défaut true
   showCta?: boolean; // pages légales => false
   title?: string; // optionnel, si tu veux changer le libellé du CTA plus tard
 };
 
-export function Header({ onCtaClick, showCta = true, title }: Props) {
+export function Header({
+  onCtaClick,
+  showCta = true,
+  showNav = true,
+  title,
+}: Props) {
   const ctaLabel = title ?? "Obtenir mon plan";
 
   return (
@@ -25,17 +31,19 @@ export function Header({ onCtaClick, showCta = true, title }: Props) {
             <span className={styles.name}>TravelTactik</span>
           </Link>
 
-          <nav className={styles.nav} aria-label="Navigation principale">
-            <Link className={styles.link} href="/#brief">
-              Brief
-            </Link>
-            <Link className={styles.link} href="/#scenarios">
-              Offres
-            </Link>
-            <Link className={styles.link} href="/#faq">
-              FAQ
-            </Link>
-          </nav>
+          {showNav ? (
+            <nav className={styles.nav} aria-label="Navigation principale">
+              <Link className={styles.link} href="/#brief">
+                Brief
+              </Link>
+              <Link className={styles.link} href="/#scenarios">
+                Offres
+              </Link>
+              <Link className={styles.link} href="/#faq">
+                FAQ
+              </Link>
+            </nav>
+          ) : null}
 
           <div className={styles.actions}>
             {showCta ? (

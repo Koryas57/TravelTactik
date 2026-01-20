@@ -33,12 +33,29 @@ body {
   margin: 0;
   background: var(--tt-bg);
   color: var(--tt-text);
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    Arial;
+  height: 100%;
 }
 
 a {
   color: inherit;
   text-decoration: none;
+}
+
+.appShell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.appMain {
+  flex: 1;
 }
 
 .container {
