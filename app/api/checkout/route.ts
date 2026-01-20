@@ -13,11 +13,25 @@ type CheckoutPayload = {
   notes: string;
   pack: ServicePack;
   speed: DeliverySpeed;
-  priceEUR: number;
+  priceEUR?: number;
   brief: TripBrief;
   selectedPlan: ComfortLevel | null;
   createdAt: string;
 };
+
+const PACK_PRICE_EUR: Record<ServicePack, number> = {
+  audit: 19,
+  itinerary: 49,
+  concierge: 99,
+};
+
+const URGENT_FEE_EUR = 20;
+
+function computePriceEUR(pack: ServicePack, speed: DeliverySpeed) {
+  const base = PACK_PRICE_EUR[pack];
+  const urgent = speed === "urgent" ? URGENT_FEE_EUR : 0;
+  return base + urgent;
+}
 
 function isEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
@@ -75,6 +89,18 @@ export async function POST(req: Request) {
       { status: 400 },
     );
 
+  const computedPriceEUR = computePriceEUR(body.pack, body.speed);
+
+  if (typeof body.priceEUR === "number" && body.priceEUR !== computedPriceEUR) {
+    console.warn("[Traveltactik] Price mismatch from client", {
+      client: body.priceEUR,
+      computed: computedPriceEUR,
+      pack: body.pack,
+      speed: body.speed,
+      email: body.email,
+    });
+  }
+
   const siteUrl =
     process.env.NEXT_PUBLIC_SITE_URL || "https://travel-tactik.com";
   const ua = req.headers.get("user-agent") ?? null;
@@ -94,7 +120,7 @@ export async function POST(req: Request) {
         ${body.notes ?? ""},
         ${body.pack},
         ${body.speed},
-        ${body.priceEUR},
+        ${computedPriceEUR},
         ${JSON.stringify(body.brief)}::jsonb,
         ${body.selectedPlan},
         ${createdAtISO}::timestamptz,
@@ -119,7 +145,7 @@ export async function POST(req: Request) {
           quantity: 1,
           price_data: {
             currency: "eur",
-            unit_amount: Math.round(body.priceEUR * 100),
+            unit_amount: Math.round(computedPriceEUR * 100),
             product_data: {
               name: `TravelTactik — ${body.pack} (${body.speed})`,
               description: `Destination: ${body.brief.destination || "Flexible"} — Durée: ${body.brief.durationDays}j — Voyageurs: ${body.brief.travelers}`,
@@ -144,7 +170,7 @@ export async function POST(req: Request) {
     `;
 
     return NextResponse.json(
-      { ok: true, url: session.url, leadId },
+      { ok: true, url: session.url, leadId, priceEUR: computedPriceEUR },
       { status: 200 },
     );
   } catch (err) {
