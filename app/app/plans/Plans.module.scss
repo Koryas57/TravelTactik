@@ -1,0 +1,145 @@
+.wrap {
+  display: grid;
+  gap: 18px;
+}
+
+.top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.h1 {
+  margin: 0;
+}
+
+.sub {
+  margin: 6px 0 0;
+  color: var(--tt-muted);
+}
+
+.grid {
+  display: grid;
+  gap: 12px;
+}
+
+.card {
+  border: 1px solid var(--tt-border);
+  border-radius: 18px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.cardTop {
+  display: grid;
+  gap: 8px;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.destination {
+  font-size: 16px;
+}
+
+.badge {
+  color: var(--tt-muted);
+  font-weight: 700;
+  border: 1px solid var(--tt-border);
+  background: rgba(255, 255, 255, 0.6);
+  padding: 6px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.meta {
+  color: var(--tt-muted);
+}
+
+.packRow {
+  margin-top: 2px;
+}
+
+.docs {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--tt-border);
+  display: grid;
+  gap: 10px;
+}
+
+.docsTitle {
+  font-weight: 800;
+}
+
+.docsNote {
+  color: var(--tt-muted);
+  font-size: 13px;
+}
+
+.docsList {
+  display: grid;
+  gap: 10px;
+}
+
+.docRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.docLabel {
+  font-weight: 700;
+}
+
+.docStatus {
+  color: var(--tt-muted);
+  font-size: 13px;
+  margin-top: 2px;
+}
+
+.smallBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--tt-border);
+  background: #fff;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.smallBtn:hover {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.muted {
+  color: var(--tt-muted);
+}
+
+.empty {
+  border: 1px solid var(--tt-border);
+  border-radius: 18px;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.primaryLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: var(--tt-blue);
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+}
