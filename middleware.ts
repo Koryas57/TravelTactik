@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { getToken } from "next-auth/jwt";
 
-function unauthorized() {
+function unauthorizedAdmin() {
   return new NextResponse("Unauthorized", {
     status: 401,
     headers: {
@@ -19,7 +20,6 @@ function decodeBasicAuth(
 
   let decoded = "";
   try {
-    // Edge runtime: atob est dispo
     decoded = atob(base64);
   } catch {
     return null;
@@ -35,31 +35,64 @@ function decodeBasicAuth(
   return { user, pass };
 }
 
-export function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Protège /admin et /api/admin
-  if (!pathname.startsWith("/admin") && !pathname.startsWith("/api/admin")) {
+  // =========================
+  // 1) Admin (Basic Auth)
+  // =========================
+  if (pathname.startsWith("/admin") || pathname.startsWith("/api/admin")) {
+    const expectedUser = process.env.ADMIN_BASIC_USER;
+    const expectedPass = process.env.ADMIN_BASIC_PASS;
+    if (!expectedUser || !expectedPass) return unauthorizedAdmin();
+
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader) return unauthorizedAdmin();
+
+    const creds = decodeBasicAuth(authHeader);
+    if (!creds) return unauthorizedAdmin();
+
+    if (creds.user !== expectedUser || creds.pass !== expectedPass) {
+      return unauthorizedAdmin();
+    }
+
     return NextResponse.next();
   }
 
-  const expectedUser = process.env.ADMIN_BASIC_USER;
-  const expectedPass = process.env.ADMIN_BASIC_PASS;
-  if (!expectedUser || !expectedPass) return unauthorized();
+  // =========================
+  // 2) Client space (/app)
+  // =========================
+  if (pathname.startsWith("/app") || pathname.startsWith("/api/app")) {
+    const secret = process.env.AUTH_SECRET;
+    if (!secret) {
+      // si tu as oublié AUTH_SECRET, on force la connexion (plutôt que crash)
+      const url = req.nextUrl.clone();
+      url.pathname = "/api/auth/signin";
+      url.searchParams.set("callbackUrl", req.nextUrl.href);
+      return NextResponse.redirect(url);
+    }
 
-  const auth = req.headers.get("authorization");
-  if (!auth) return unauthorized();
+    // Edge-safe: lit le token NextAuth depuis les cookies
+    const token = await getToken({ req, secret });
 
-  const creds = decodeBasicAuth(auth);
-  if (!creds) return unauthorized();
+    if (!token) {
+      const url = req.nextUrl.clone();
+      url.pathname = "/api/auth/signin";
+      url.searchParams.set("callbackUrl", req.nextUrl.href);
+      return NextResponse.redirect(url);
+    }
 
-  if (creds.user !== expectedUser || creds.pass !== expectedPass) {
-    return unauthorized();
+    return NextResponse.next();
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/admin/:path*"],
+  matcher: [
+    "/admin/:path*",
+    "/api/admin/:path*",
+    "/app/:path*",
+    "/api/app/:path*",
+  ],
 };
