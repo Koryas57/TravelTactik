@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { LegalLayout } from "../../components/Legal/LegalLayout";
 
 export default function ConfidentialitePage() {

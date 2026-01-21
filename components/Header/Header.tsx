@@ -2,23 +2,17 @@
 
 import Link from "next/link";
 import styles from "./Header.module.scss";
-import { HeaderAuthActions } from "../Auth/HeaderAuthActions";
+import { HeaderMenu } from "./HeaderMenu";
 
 type Props = {
   onCtaClick?: () => void;
-  showNav?: boolean;
   showCta?: boolean;
-  showAuth?: boolean; // NEW
+  showNav?: boolean; // gardé pour compat, mais on ne l’utilise plus
+  showAuth?: boolean; // gardé pour compat (auth est dans le menu)
   title?: string;
 };
 
-export function Header({
-  onCtaClick,
-  showCta = true,
-  showNav = true,
-  showAuth = true,
-  title,
-}: Props) {
+export function Header({ onCtaClick, showCta = true, title }: Props) {
   const ctaLabel = title ?? "Obtenir mon plan";
 
   return (
@@ -34,29 +28,7 @@ export function Header({
             <span className={styles.name}>TravelTactik</span>
           </Link>
 
-          {showNav ? (
-            <nav className={styles.nav} aria-label="Navigation principale">
-              <Link className={styles.link} href="/#brief">
-                Brief
-              </Link>
-              <Link className={styles.link} href="/#scenarios">
-                Offres
-              </Link>
-              <Link className={styles.link} href="/#faq">
-                FAQ
-              </Link>
-            </nav>
-          ) : null}
-
           <div className={styles.actions}>
-            {showAuth ? (
-              <HeaderAuthActions
-                classNameLogin={styles.authLink}
-                classNameApp={styles.authLink}
-                classNameLogout={styles.authBtn}
-              />
-            ) : null}
-
             {showCta ? (
               <button
                 type="button"
@@ -72,6 +44,8 @@ export function Header({
                 ← Retour au site
               </Link>
             )}
+
+            <HeaderMenu openCheckout={onCtaClick} />
           </div>
         </div>
       </div>
