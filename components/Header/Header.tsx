@@ -2,18 +2,21 @@
 
 import Link from "next/link";
 import styles from "./Header.module.scss";
+import { HeaderAuthActions } from "../Auth/HeaderAuthActions";
 
 type Props = {
   onCtaClick?: () => void;
-  showNav?: boolean; // par défaut true
-  showCta?: boolean; // pages légales => false
-  title?: string; // optionnel, si tu veux changer le libellé du CTA plus tard
+  showNav?: boolean;
+  showCta?: boolean;
+  showAuth?: boolean; // NEW
+  title?: string;
 };
 
 export function Header({
   onCtaClick,
   showCta = true,
   showNav = true,
+  showAuth = true,
   title,
 }: Props) {
   const ctaLabel = title ?? "Obtenir mon plan";
@@ -46,6 +49,14 @@ export function Header({
           ) : null}
 
           <div className={styles.actions}>
+            {showAuth ? (
+              <HeaderAuthActions
+                classNameLogin={styles.authLink}
+                classNameApp={styles.authLink}
+                classNameLogout={styles.authBtn}
+              />
+            ) : null}
+
             {showCta ? (
               <button
                 type="button"

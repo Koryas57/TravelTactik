@@ -132,6 +132,36 @@
   outline-offset: 3px;
 }
 
+.authLink {
+  color: var(--tt-text);
+  text-decoration: none;
+  font-weight: 700;
+  padding: 10px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--tt-border);
+  background: rgba(255, 255, 255, 0.6);
+  white-space: nowrap;
+  transition: background 120ms ease;
+}
+
+.authLink:hover {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.authBtn {
+  padding: 10px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--tt-border);
+  background: rgba(255, 255, 255, 0.6);
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.authBtn:hover {
+  background: rgba(255, 255, 255, 0.85);
+}
+
 @media (min-width: 860px) {
   .nav {
     display: flex;
