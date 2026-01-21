@@ -24,10 +24,19 @@
   background: #fff;
   font-weight: 800;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
 .googleBtn:hover {
   background: rgba(255, 255, 255, 0.85);
+}
+
+.googleIcon {
+  display: inline-flex;
+  align-items: center;
 }
 
 .small {
@@ -35,4 +44,20 @@
   color: var(--tt-muted);
   font-size: 13px;
   line-height: 1.4;
+}
+
+.muted {
+  color: var(--tt-muted);
+}
+
+.primaryLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: var(--tt-blue);
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
 }
