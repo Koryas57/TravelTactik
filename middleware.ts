@@ -67,7 +67,7 @@ export async function middleware(req: NextRequest) {
     if (!secret) {
       // si tu as oublié AUTH_SECRET, on force la connexion (plutôt que crash)
       const url = req.nextUrl.clone();
-      url.pathname = "/api/auth/signin";
+      url.pathname = "/login";
       url.searchParams.set("callbackUrl", req.nextUrl.href);
       return NextResponse.redirect(url);
     }
@@ -77,7 +77,7 @@ export async function middleware(req: NextRequest) {
 
     if (!token) {
       const url = req.nextUrl.clone();
-      url.pathname = "/api/auth/signin";
+      url.pathname = "/login";
       url.searchParams.set("callbackUrl", req.nextUrl.href);
       return NextResponse.redirect(url);
     }
