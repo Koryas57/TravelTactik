@@ -73,9 +73,12 @@ export default async function PlansPage() {
       <div className={styles.top}>
         <div>
           <h1 className={styles.h1}>Mes plans de voyage</h1>
+          <br />
           <p className={styles.sub}>
-            Retrouve tes demandes, le statut et tes documents.
+            Retrouve ici tes demandes, leurs statut, ainsi que tes documents et
+            ton carnet de voyage.
           </p>
+          <br />
         </div>
       </div>
 

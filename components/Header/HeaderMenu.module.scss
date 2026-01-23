@@ -137,7 +137,8 @@
   border: 0;
   background: var(--tt-blue);
   color: #fff;
-  font-weight: 800;
+  font-weight: 700;
+  text-align: center;
   cursor: pointer;
 }
 
@@ -161,4 +162,27 @@
   padding-top: 14px;
   color: var(--tt-muted);
   font-size: 14px;
+}
+
+.googleIcon {
+  display: inline-flex;
+  align-items: center;
+}
+
+.googleBtn {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--tt-border);
+  background: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.googleBtn:hover {
+  background: rgba(255, 255, 255, 0.45);
 }

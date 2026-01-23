@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import styles from "./HeaderMenu.module.scss";
+import { GoogleIcon } from "../icons/GoogleIcon";
 
 type Props = {
   openCheckout?: () => void; // CTA
@@ -20,7 +21,13 @@ export function HeaderMenu({ openCheckout }: Props) {
   const authed = status === "authenticated";
 
   const pathname = usePathname();
-  const currentUrl = pathname || "/";
+
+  function getCurrentUrlSafe() {
+    if (typeof window === "undefined") return pathname || "/";
+    return (
+      window.location.pathname + window.location.search + window.location.hash
+    );
+  }
 
   const isHome = pathname === "/";
   const hideLogin = pathname === "/login";
@@ -59,6 +66,11 @@ export function HeaderMenu({ openCheckout }: Props) {
       document.body.style.overflow = prev;
     };
   }, [open]);
+
+  useEffect(() => {
+    close();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
 
   // focus first actionable element
   useEffect(() => {
@@ -184,10 +196,13 @@ export function HeaderMenu({ openCheckout }: Props) {
                 <div className={styles.links}>
                   {!hideLogin ? (
                     <Link
-                      className={styles.primary}
-                      href={`/login?callbackUrl=${encodeURIComponent(currentUrl)}`}
+                      className={styles.googleBtn}
+                      href={`/login?callbackUrl=${encodeURIComponent(getCurrentUrlSafe())}`}
                       onClick={close}
                     >
+                      <span className={styles.googleIcon} aria-hidden="true">
+                        <GoogleIcon size={22} />
+                      </span>
                       Continuer avec Google
                     </Link>
                   ) : (
