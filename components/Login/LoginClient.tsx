@@ -20,10 +20,10 @@ export function LoginClient({ callbackUrl }: Props) {
 
   return (
     <div className={styles.wrap}>
-      <h1 className={styles.h1}>Me connecter à mon Espace Client</h1>
+      <h1 className={styles.h1}>Continuer vers mon Espace Client</h1>
       <br />
       <p className={styles.sub}>
-        Accèder à mon espace client pour retrouver mes plans de voyages,
+        Accèder à votre espace client pour retrouver vos plans de voyages,
         documents et offres enregistrées.
       </p>
 
@@ -46,7 +46,7 @@ export function LoginClient({ callbackUrl }: Props) {
       )}
 
       <p className={styles.small}>
-        En continuant, tu acceptes nos{" "}
+        En continuant, vous acceptez nos{" "}
         <Link href="/mentions-legales">mentions légales</Link> et notre{" "}
         <Link href="/confidentialite">politique de confidentialité</Link>.
       </p>

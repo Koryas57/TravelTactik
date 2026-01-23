@@ -1,7 +1,7 @@
 .burger {
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
+  width: 46px;
+  height: 35px;
+  border-radius: 999px;
   border: 1px solid var(--tt-border);
   background: rgba(255, 255, 255, 0.65);
   cursor: pointer;
@@ -59,8 +59,8 @@
 .backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(10, 12, 18, 0.45);
-  border: 0;
+  background: #f6f8fc;
+  border: 1px solid #f6f8fc;
   cursor: pointer;
 }
 
@@ -75,29 +75,42 @@
   padding: 18px;
   display: flex;
   flex-direction: column;
+  box-shadow: -18px 0 40px #00000061;
 }
 
 .top {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  justify-content: flex-end;
+  gap: 36px;
   padding-bottom: 10px;
   border-bottom: 1px solid var(--tt-border);
 }
 
+.logoDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: var(--tt-amber);
+  box-shadow: 0 0 0 6px rgba(255, 194, 51, 0.25);
+  position: absolute;
+  left: 15vw;
+}
+
 .panelTitle {
-  font-weight: 900;
+  font-weight: 800;
   letter-spacing: 0.2px;
+  font-size: 1.75rem;
 }
 
 .close {
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
   border-radius: 12px;
   border: 1px solid var(--tt-border);
   background: rgba(255, 255, 255, 0.6);
   cursor: pointer;
+  font-weight: 900;
 }
 
 .section {
@@ -185,4 +198,12 @@
 
 .googleBtn:hover {
   background: rgba(255, 255, 255, 0.45);
+}
+
+.link:focus-visible,
+.primary:focus-visible,
+.secondary:focus-visible,
+.close:focus-visible {
+  outline: 2px solid rgba(0, 0, 0, 0.35);
+  outline-offset: 3px;
 }

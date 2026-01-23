@@ -110,7 +110,8 @@ export function HeaderMenu({ openCheckout }: Props) {
 
           <div className={styles.panel} ref={panelRef}>
             <div className={styles.top}>
-              <div className={styles.panelTitle}>Menu</div>
+              <span className={styles.logoDot} aria-hidden="true" />
+              <div className={styles.panelTitle}>Travel Tactik</div>
               <button
                 type="button"
                 className={styles.close}
