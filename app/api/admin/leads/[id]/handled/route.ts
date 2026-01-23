@@ -1,6 +1,7 @@
 export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 import { getSql } from "../../../../../../lib/db";
 
 function isUuid(v: string) {
@@ -11,7 +12,7 @@ function isUuid(v: string) {
 
 type Ctx = { params: Promise<{ id: string }> };
 
-export async function POST(_req: Request, ctx: Ctx) {
+export async function POST(_req: NextRequest, ctx: Ctx) {
   const { id } = await ctx.params;
 
   if (!isUuid(id)) {

@@ -1,6 +1,7 @@
 export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../../../../auth";
 import { getSql } from "../../../../../../lib/db";
@@ -17,10 +18,9 @@ function isDocType(v: string): v is DocType {
   return v === "tarifs" || v === "descriptif" || v === "carnet";
 }
 
-export async function GET(
-  _req: Request,
-  { params }: { params: { leadId: string; docType: string } },
-) {
+type Ctx = { params: Promise<{ leadId: string; docType: string }> };
+
+export async function GET(_req: NextRequest, ctx: Ctx) {
   const session = await getServerSession(authOptions);
   const email = session?.user?.email?.toLowerCase().trim();
 
@@ -31,8 +31,7 @@ export async function GET(
     );
   }
 
-  const leadId = params.leadId;
-  const docType = params.docType;
+  const { leadId, docType } = await ctx.params;
 
   if (!isUuid(leadId)) {
     return NextResponse.json(

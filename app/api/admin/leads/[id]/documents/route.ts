@@ -1,6 +1,7 @@
 export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 import { getSql } from "../../../../../../lib/db";
 
 type DocType = "tarifs" | "descriptif" | "carnet";
@@ -21,21 +22,21 @@ function isDocStatus(v: unknown): v is DocStatus {
 }
 
 export async function POST(
-  req: Request,
-  { params }: { params: { id: string } },
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
 ) {
-  const leadId = params.id;
+  const { id } = await params;
 
-  if (!isUuid(leadId)) {
+  if (!isUuid(id)) {
     return NextResponse.json(
-      { ok: false, error: "Invalid lead id" },
+      { ok: false, error: "Invalid id" },
       { status: 400 },
     );
   }
 
   let body: { docType?: unknown; status?: unknown; url?: unknown };
   try {
-    body = (await req.json()) as any;
+    body = (await _req.json()) as any;
   } catch {
     return NextResponse.json(
       { ok: false, error: "Invalid JSON" },
@@ -81,7 +82,7 @@ export async function POST(
     // upsert (au cas où la ligne n’existe pas encore)
     const rows = await sql`
       insert into lead_documents (lead_id, doc_type, status, url)
-      values (${leadId}::uuid, ${docType}, ${status}, ${nextUrl})
+      values (${id}::uuid, ${docType}, ${status}, ${nextUrl})
       on conflict (lead_id, doc_type)
       do update set
         status = excluded.status,
