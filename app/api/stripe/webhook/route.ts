@@ -57,6 +57,16 @@ async function handleCheckoutPaid(event: Stripe.Event) {
     return;
   }
 
+  // 1bis) Create pending documents for this paid lead (idempotent)
+  await sql`
+  insert into lead_documents (lead_id, doc_type, status)
+  values
+    (${leadId}::uuid, 'tarifs', 'pending'),
+    (${leadId}::uuid, 'descriptif', 'pending'),
+    (${leadId}::uuid, 'carnet', 'pending')
+  on conflict (lead_id, doc_type) do nothing;
+`;
+
   // 2) Recharge les infos lead pour email
   const rows = await sql`
     select

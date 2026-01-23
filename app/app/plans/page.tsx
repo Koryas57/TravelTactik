@@ -162,7 +162,7 @@ export default async function PlansPage() {
                               {ready ? (
                                 <a
                                   className={styles.smallBtn}
-                                  href={d!.url!}
+                                  href={`/api/app/documents/${r.id}/${type}`}
                                   target="_blank"
                                   rel="noreferrer"
                                 >
