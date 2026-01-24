@@ -42,6 +42,13 @@ type OfferRow = {
   updated_at: string;
 };
 
+function formatTier(t: Tier | null) {
+  if (!t) return "—";
+  if (t === "eco") return "Eco";
+  if (t === "comfort") return "Confort";
+  return "Premium";
+}
+
 export function AdminOffersClient() {
   const [rows, setRows] = useState<OfferRow[]>([]);
   const [loading, setLoading] = useState(false);
@@ -125,9 +132,11 @@ export function AdminOffersClient() {
           </p>
         </div>
 
-        <button className={styles.refresh} onClick={load} disabled={loading}>
-          {loading ? "Chargement..." : "Rafraîchir"}
-        </button>
+        <div className={styles.topActions}>
+          <button className={styles.refresh} onClick={load} disabled={loading}>
+            {loading ? "Chargement..." : "Rafraîchir"}
+          </button>
+        </div>
       </div>
 
       <CreateOffer
@@ -137,53 +146,68 @@ export function AdminOffersClient() {
         }}
       />
 
-      <div className={styles.filters}>
-        <label className={styles.filter}>
-          <span>Recherche</span>
-          <input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Bangkok, Lisbonne, CDG…"
-          />
-        </label>
+      <section className={styles.filtersCard}>
+        <div className={styles.filters}>
+          <label className={styles.filter}>
+            <span>Recherche</span>
+            <input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Bangkok, Lisbonne, CDG…"
+            />
+          </label>
 
-        <label className={styles.filter}>
-          <span>Catégorie</span>
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
+          <label className={styles.filter}>
+            <span>Catégorie</span>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+            >
+              {CATEGORIES.map((c) => (
+                <option key={c || "__all"} value={c}>
+                  {c ? c : "Toutes"}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className={styles.filter}>
+            <span>Gamme</span>
+            <select value={tier} onChange={(e) => setTier(e.target.value)}>
+              {TIERS.map((t) => (
+                <option key={t || "__all"} value={t}>
+                  {t ? t : "Toutes"}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className={styles.filter}>
+            <span>Publié</span>
+            <select
+              value={published}
+              onChange={(e) => setPublished(e.target.value)}
+            >
+              <option value="">Tous</option>
+              <option value="true">Publié</option>
+              <option value="false">Brouillon</option>
+            </select>
+          </label>
+
+          <button
+            className={styles.secondary}
+            type="button"
+            onClick={() => {
+              setQ("");
+              setCategory("");
+              setTier("");
+              setPublished("");
+            }}
           >
-            {CATEGORIES.map((c) => (
-              <option key={c || "__all"} value={c}>
-                {c ? c : "Toutes"}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className={styles.filter}>
-          <span>Gamme</span>
-          <select value={tier} onChange={(e) => setTier(e.target.value)}>
-            {TIERS.map((t) => (
-              <option key={t || "__all"} value={t}>
-                {t ? t : "Toutes"}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className={styles.filter}>
-          <span>Publié</span>
-          <select
-            value={published}
-            onChange={(e) => setPublished(e.target.value)}
-          >
-            <option value="">Tous</option>
-            <option value="true">Publié</option>
-            <option value="false">Brouillon</option>
-          </select>
-        </label>
-      </div>
+            Reset
+          </button>
+        </div>
+      </section>
 
       {error ? <div className={styles.error}>{error}</div> : null}
 
@@ -243,41 +267,67 @@ function CreateOffer({
   }
 
   return (
-    <section style={{ margin: "14px 0 18px" }}>
-      <div style={{ fontWeight: 900, marginBottom: 10 }}>Créer une offre</div>
-      <div
-        style={{
-          display: "grid",
-          gap: 10,
-          gridTemplateColumns: "1.2fr 1fr 0.9fr 0.7fr auto",
-        }}
-      >
-        <input
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Titre (ex: Bangkok malin 7j)"
-        />
-        <input
-          value={destination}
-          onChange={(e) => setDestination(e.target.value)}
-          placeholder="Destination"
-        />
-        <select value={category} onChange={(e) => setCategory(e.target.value)}>
-          {CATEGORIES.map((c) => (
-            <option key={c || "__all"} value={c}>
-              {c ? c : "Catégorie…"}
-            </option>
-          ))}
-        </select>
-        <select value={tier} onChange={(e) => setTier(e.target.value)}>
-          <option value="">Gamme…</option>
-          <option value="eco">Eco</option>
-          <option value="comfort">Confort</option>
-          <option value="premium">Premium</option>
-        </select>
-        <button type="button" onClick={submit} disabled={saving}>
+    <section className={styles.createCard}>
+      <div className={styles.createTop}>
+        <div>
+          <div className={styles.createTitle}>Créer une offre</div>
+          <div className={styles.createSub}>
+            Crée la card, puis complète les détails juste en dessous.
+          </div>
+        </div>
+
+        <button
+          className={styles.primaryBtn}
+          type="button"
+          onClick={submit}
+          disabled={saving}
+        >
           {saving ? "…" : "Créer"}
         </button>
+      </div>
+
+      <div className={styles.createGrid}>
+        <label className={styles.field}>
+          <span>Titre</span>
+          <input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="ex: Bangkok malin 7j"
+          />
+        </label>
+
+        <label className={styles.field}>
+          <span>Destination</span>
+          <input
+            value={destination}
+            onChange={(e) => setDestination(e.target.value)}
+            placeholder="ex: Bangkok"
+          />
+        </label>
+
+        <label className={styles.field}>
+          <span>Catégorie</span>
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+          >
+            {CATEGORIES.map((c) => (
+              <option key={c || "__all"} value={c}>
+                {c ? c : "—"}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className={styles.field}>
+          <span>Gamme (étiquette)</span>
+          <select value={tier} onChange={(e) => setTier(e.target.value)}>
+            <option value="">—</option>
+            <option value="eco">Eco</option>
+            <option value="comfort">Confort</option>
+            <option value="premium">Premium</option>
+          </select>
+        </label>
       </div>
     </section>
   );
@@ -296,7 +346,7 @@ function OfferEditor({
   const [destination, setDestination] = useState(offer.destination);
   const [imageUrl, setImageUrl] = useState(offer.image_url || "");
   const [category, setCategory] = useState(offer.category || "");
-  const [tier, setTier] = useState(offer.tier || "");
+  const [tier, setTier] = useState<string>(offer.tier || "");
   const [priceFrom, setPriceFrom] = useState<string>(
     offer.price_from_eur === null ? "" : String(offer.price_from_eur),
   );
@@ -341,121 +391,146 @@ function OfferEditor({
   }
 
   return (
-    <article className={styles.card}>
-      <div className={styles.cardHeader}>
+    <article className={styles.offerCard}>
+      <div className={styles.offerTop}>
         <div>
           <div className={styles.slug}>{offer.slug}</div>
-          <div className={styles.minPrice}>
-            À partir de <strong>{offer.price_from_eur ?? "—"}€</strong>
+          <div className={styles.offerMetaLine}>
+            <span className={styles.pill}>{category || "Draft"}</span>
+            <span className={styles.pillAlt}>
+              {formatTier((tier as Tier) || null)}
+            </span>
+            <span
+              className={`${styles.pill} ${published ? styles.pillOn : styles.pillOff}`}
+            >
+              {published ? "Publié" : "Brouillon"}
+            </span>
           </div>
         </div>
+
         <button className={styles.smallBtn} onClick={save} disabled={saving}>
           {saving ? "…" : "Enregistrer"}
         </button>
       </div>
 
-      <div className={styles.form}>
-        <label className={styles.field}>
-          <span>Titre</span>
-          <input value={title} onChange={(e) => setTitle(e.target.value)} />
-        </label>
+      <div className={styles.section}>
+        <div className={styles.sectionTitle}>Identité</div>
+        <div className={styles.formGrid}>
+          <label className={styles.field}>
+            <span>Titre</span>
+            <input value={title} onChange={(e) => setTitle(e.target.value)} />
+          </label>
 
-        <label className={styles.field}>
-          <span>Destination</span>
-          <input
-            value={destination}
-            onChange={(e) => setDestination(e.target.value)}
-          />
-        </label>
+          <label className={styles.field}>
+            <span>Destination</span>
+            <input
+              value={destination}
+              onChange={(e) => setDestination(e.target.value)}
+            />
+          </label>
 
-        <label className={styles.field}>
-          <span>Image URL</span>
-          <input
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-            placeholder="https://…"
-          />
-        </label>
+          <label className={styles.field}>
+            <span>Catégorie</span>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+            >
+              {CATEGORIES.map((c) => (
+                <option key={c || "__all"} value={c}>
+                  {c ? c : "—"}
+                </option>
+              ))}
+            </select>
+          </label>
 
-        <label className={styles.field}>
-          <span>Catégorie</span>
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-          >
-            {CATEGORIES.map((c) => (
-              <option key={c || "__all"} value={c}>
-                {c ? c : "— (draft)"}
-              </option>
-            ))}
-          </select>
-        </label>
+          <label className={styles.field}>
+            <span>Gamme (étiquette)</span>
+            <select value={tier} onChange={(e) => setTier(e.target.value)}>
+              <option value="">—</option>
+              <option value="eco">Eco</option>
+              <option value="comfort">Confort</option>
+              <option value="premium">Premium</option>
+            </select>
+          </label>
 
-        <label className={styles.field}>
-          <span>Gamme (étiquette)</span>
-          <select value={tier} onChange={(e) => setTier(e.target.value)}>
-            <option value="">—</option>
-            <option value="eco">Eco</option>
-            <option value="comfort">Confort</option>
-            <option value="premium">Premium</option>
-          </select>
-        </label>
+          <label className={styles.fieldWide}>
+            <span>Image URL</span>
+            <input
+              value={imageUrl}
+              onChange={(e) => setImageUrl(e.target.value)}
+              placeholder="https://…"
+            />
+          </label>
+        </div>
+      </div>
 
-        <label className={styles.field}>
-          <span>À partir de (€)</span>
-          <input
-            value={priceFrom}
-            onChange={(e) => setPriceFrom(e.target.value)}
-            inputMode="numeric"
-            placeholder="ex: 199"
-          />
-        </label>
+      <div className={styles.section}>
+        <div className={styles.sectionTitle}>Prix & logistique</div>
+        <div className={styles.formGrid}>
+          <label className={styles.field}>
+            <span>À partir de (€)</span>
+            <input
+              value={priceFrom}
+              onChange={(e) => setPriceFrom(e.target.value)}
+              inputMode="numeric"
+              placeholder="ex: 199"
+            />
+          </label>
 
-        <label className={styles.field}>
-          <span>Durée (jours)</span>
-          <input
-            value={durationDays}
-            onChange={(e) => setDurationDays(e.target.value)}
-            inputMode="numeric"
-            placeholder="ex: 7"
-          />
-        </label>
+          <label className={styles.field}>
+            <span>Durée (jours)</span>
+            <input
+              value={durationDays}
+              onChange={(e) => setDurationDays(e.target.value)}
+              inputMode="numeric"
+              placeholder="ex: 7"
+            />
+          </label>
 
-        <label className={styles.field}>
-          <span>Personnes</span>
-          <input
-            value={persons}
-            onChange={(e) => setPersons(e.target.value)}
-            inputMode="numeric"
-            placeholder="ex: 2"
-          />
-        </label>
+          <label className={styles.field}>
+            <span>Personnes</span>
+            <input
+              value={persons}
+              onChange={(e) => setPersons(e.target.value)}
+              inputMode="numeric"
+              placeholder="ex: 2"
+            />
+          </label>
 
-        <label className={styles.field}>
-          <span>Ville départ</span>
-          <input
-            value={depCity}
-            onChange={(e) => setDepCity(e.target.value)}
-            placeholder="ex: Marseille"
-          />
-        </label>
+          <label className={styles.field}>
+            <span>Ville départ</span>
+            <input
+              value={depCity}
+              onChange={(e) => setDepCity(e.target.value)}
+              placeholder="ex: Marseille"
+            />
+          </label>
 
-        <label className={styles.field}>
-          <span>Aéroport départ</span>
-          <input
-            value={depAirport}
-            onChange={(e) => setDepAirport(e.target.value)}
-            placeholder="ex: MRS / CDG"
-          />
-        </label>
+          <label className={styles.field}>
+            <span>Aéroport départ</span>
+            <input
+              value={depAirport}
+              onChange={(e) => setDepAirport(e.target.value)}
+              placeholder="ex: MRS / CDG"
+            />
+          </label>
+        </div>
+      </div>
 
-        <label className={styles.check}>
+      <div className={styles.section}>
+        <div className={styles.sectionTitle}>Publication</div>
+        <label className={styles.checkRow}>
           <input
             type="checkbox"
             checked={published}
             onChange={(e) => setPublished(e.target.checked)}
           />
-          <span>Publié (visible sur /offres)</span>
+          <div>
+            <div className={styles.checkTitle}>Publié</div>
+            <div className={styles.checkHint}>
+              Si activé, la card est visible sur /offres.
+            </div>
+          </div>
         </label>
       </div>
     </article>

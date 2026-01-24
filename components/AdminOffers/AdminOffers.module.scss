@@ -302,3 +302,215 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ===== Admin Offres: regroupement & lisibilité ===== */
+
+.filtersCard {
+  border: 1px solid var(--tt-border);
+  border-radius: 18px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.filters {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr;
+  align-items: end;
+}
+
+@media (min-width: 860px) {
+  .filters {
+    grid-template-columns: 1.4fr 1fr 0.8fr 0.8fr auto;
+  }
+}
+
+.filter {
+  display: grid;
+  gap: 6px;
+  font-weight: 700;
+}
+
+.filter > span {
+  font-size: 12px;
+  color: var(--tt-muted);
+  font-weight: 900;
+  letter-spacing: 0.02em;
+}
+
+.filter input,
+.filter select {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--tt-border);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+/* create card top row */
+.createTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.createSub {
+  color: var(--tt-muted);
+  font-weight: 650;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+/* grid of editors */
+.grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: 1fr;
+  margin-top: 14px;
+}
+
+@media (min-width: 980px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* offer editor card */
+.offerCard {
+  border: 1px solid var(--tt-border);
+  border-radius: 18px;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      900px 260px at 20% 0%,
+      rgba(59, 130, 246, 0.1),
+      transparent 55%
+    ),
+    radial-gradient(
+      900px 260px at 85% 10%,
+      rgba(245, 158, 11, 0.1),
+      transparent 60%
+    ),
+    rgba(255, 255, 255, 0.55);
+}
+
+.offerTop {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
+  border-bottom: 1px solid var(--tt-border);
+  background: rgba(246, 248, 252, 0.7);
+}
+
+.offerMetaLine {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.pill,
+.pillAlt {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+  border: 1px solid var(--tt-border);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.pillAlt {
+  border-color: rgba(59, 130, 246, 0.45);
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.pillOn {
+  border-color: rgba(34, 197, 94, 0.35);
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.pillOff {
+  border-color: rgba(239, 68, 68, 0.25);
+  background: rgba(239, 68, 68, 0.06);
+}
+
+.section {
+  padding: 12px;
+  border-bottom: 1px solid var(--tt-border);
+}
+
+.section:last-child {
+  border-bottom: 0;
+}
+
+.sectionTitle {
+  font-weight: 1000;
+  margin-bottom: 10px;
+  letter-spacing: 0.01em;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+@media (min-width: 780px) {
+  .formGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.fieldWide {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 6px;
+  font-weight: 700;
+}
+
+.fieldWide > span {
+  font-size: 12px;
+  color: var(--tt-muted);
+  font-weight: 900;
+}
+
+.fieldWide input {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--tt-border);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+/* publication row */
+.checkRow {
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  gap: 10px;
+  align-items: start;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--tt-border);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.checkTitle {
+  font-weight: 950;
+}
+
+.checkHint {
+  margin-top: 2px;
+  color: var(--tt-muted);
+  font-weight: 650;
+  font-size: 13px;
+}
