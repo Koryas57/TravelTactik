@@ -1,0 +1,116 @@
+.wrap {
+  display: grid;
+  gap: 16px;
+}
+.header {
+  display: grid;
+  gap: 6px;
+}
+.h1 {
+  margin: 0;
+}
+.sub {
+  margin: 0;
+  color: var(--tt-muted);
+}
+
+.grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 860px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.card {
+  border: 1px solid var(--tt-border);
+  border-radius: 18px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.65);
+}
+
+.media {
+  position: relative;
+  height: 150px;
+}
+.bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      1200px 220px at 20% 0%,
+      rgba(0, 0, 0, 0.08),
+      transparent 55%
+    ),
+    linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(245, 158, 11, 0.18));
+  background-size: cover;
+  background-position: center;
+}
+
+.heart {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  border: 1px solid var(--tt-border);
+  background: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.heartOn {
+  color: #fff;
+  background: rgba(239, 68, 68, 0.95);
+  border-color: rgba(239, 68, 68, 0.65);
+}
+
+.body {
+  padding: 12px;
+  display: grid;
+  gap: 8px;
+}
+.titleRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+.title {
+  font-weight: 900;
+}
+.destination {
+  color: var(--tt-muted);
+  font-weight: 700;
+}
+
+.meta {
+  color: var(--tt-muted);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.tag {
+  font-size: 12px;
+  font-weight: 800;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--tt-border);
+  background: rgba(255, 255, 255, 0.65);
+}
+
+.muted {
+  color: var(--tt-muted);
+  font-weight: 600;
+}

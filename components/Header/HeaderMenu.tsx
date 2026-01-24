@@ -36,7 +36,7 @@ export function HeaderMenu({ openCheckout }: Props) {
     if (isHome) {
       return [
         { label: "Brief", href: "/#brief" },
-        { label: "Offres", href: "/#scenarios" },
+        { label: "Offres", href: "/offres" },
         { label: "FAQ", href: "/#faq" },
       ];
     }
