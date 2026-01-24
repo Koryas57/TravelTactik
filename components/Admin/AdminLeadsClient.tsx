@@ -292,6 +292,41 @@ function DocEditor({
     }
   }
 
+  const [file, setFile] = useState<File | null>(null);
+
+  async function uploadPdf() {
+    if (!file) return;
+
+    setSaving(true);
+    try {
+      const fd = new FormData();
+      fd.set("file", file);
+      fd.set("name", `${leadId}_${docType}.pdf`);
+
+      const res = await fetch("/api/admin/uploads", {
+        method: "POST",
+        body: fd,
+      });
+      const data = (await res.json()) as {
+        ok: boolean;
+        url?: string;
+        error?: string;
+      };
+
+      if (!res.ok || !data.ok || !data.url) {
+        throw new Error(data.error || "Upload failed");
+      }
+
+      setUrl(data.url);
+      setStatus("ready");
+
+      await onSave({ leadId, docType, status: "ready", url: data.url });
+      setFile(null);
+    } finally {
+      setSaving(false);
+    }
+  }
+
   return (
     <div
       style={{
@@ -300,7 +335,6 @@ function DocEditor({
         padding: 10,
         display: "flex",
         flexDirection: "column",
-        alignItems: "center",
       }}
     >
       <div style={{ fontWeight: 800, marginBottom: 6 }}>{label}</div>
@@ -312,6 +346,22 @@ function DocEditor({
         <option value="pending">pending</option>
         <option value="ready">ready</option>
       </select>
+
+      <input
+        type="file"
+        accept="application/pdf"
+        onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+        style={{ width: "100%", marginTop: 8 }}
+      />
+
+      <button
+        type="button"
+        onClick={uploadPdf}
+        disabled={!file || saving}
+        style={{ marginTop: 8 }}
+      >
+        {saving ? "Upload…" : "Uploader PDF"}
+      </button>
 
       <input
         type="url"
