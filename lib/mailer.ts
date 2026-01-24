@@ -127,6 +127,62 @@ export async function sendLeadEmails(leadId: string, payload: LeadPayload) {
   };
 }
 
+export async function sendLeadDeliveredEmail(args: {
+  leadId: string;
+  email: string;
+  plansUrl: string;
+}) {
+  const resend = getResend();
+
+  const from = getFrom();
+  const replyToInbox = getReplyTo();
+
+  const mode = getEmailMode();
+  const testTo = getTestTo();
+
+  const clientTo = mode === "prod" ? args.email : testTo;
+
+  const modeBanner =
+    mode === "test"
+      ? `<p style="padding:10px;border:1px solid #f59e0b;background:#fffbeb;border-radius:8px;margin:0 0 12px 0;">
+           <strong>MODE TEST</strong><br/>
+           Email client réel : <strong>${escapeHtml(args.email)}</strong><br/>
+           Envoi forcé vers : <strong>${escapeHtml(testTo)}</strong>
+         </p>`
+      : "";
+
+  const result = await resend.emails.send({
+    from,
+    to: clientTo,
+    subject: "TravelTactik — Tes documents sont disponibles !",
+    replyTo: replyToInbox,
+    html: `
+      <div style="font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;line-height:1.5">
+        ${modeBanner}
+        <h2 style="margin:0 0 8px 0;">Tes documents sont prêts</h2>
+        <p style="margin:0 0 12px 0;">
+          Tes documents TravelTactik sont désormais disponibles dans ton espace.
+        </p>
+
+        <p style="margin:0 0 14px 0;">
+          <a
+            href="${escapeHtml(args.plansUrl)}"
+            style="display:inline-block;padding:12px 16px;border-radius:999px;background:#2563eb;color:#fff;text-decoration:none;font-weight:800"
+          >
+            Accéder à mon espace
+          </a>
+        </p>
+
+        <p style="margin:0;color:#6b7280;font-size:13px">
+          Référence : ${escapeHtml(args.leadId)}
+        </p>
+      </div>
+    `,
+  });
+
+  return { result, mode, routed: { clientTo, replyToInbox } };
+}
+
 function escapeHtml(input: string) {
   return input
     .replaceAll("&", "&amp;")
