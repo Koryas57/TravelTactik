@@ -3,6 +3,15 @@
 import { useEffect, useMemo, useState } from "react";
 import styles from "./AdminLeads.module.scss";
 
+type DocType = "tarifs" | "descriptif" | "carnet";
+type DocStatus = "pending" | "ready";
+
+type LeadDoc = {
+  doc_type: DocType;
+  status: DocStatus;
+  url: string | null;
+};
+
 type LeadRow = {
   id: string;
   email: string;
@@ -15,6 +24,7 @@ type LeadRow = {
   paid_at: string | null;
   handled: boolean;
   handled_at: string | null;
+  documents: LeadDoc[];
 };
 
 export function AdminLeadsClient() {
@@ -85,6 +95,26 @@ export function AdminLeadsClient() {
     }
   }
 
+  async function upsertDoc(input: {
+    leadId: string;
+    docType: DocType;
+    status: DocStatus;
+    url?: string;
+  }) {
+    const res = await fetch(`/api/admin/leads/${input.leadId}/documents`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        docType: input.docType,
+        status: input.status,
+        url: input.url ?? "",
+      }),
+    });
+
+    const data = (await res.json()) as { ok: boolean; error?: string };
+    if (!res.ok || !data.ok) throw new Error(data.error || "Erreur serveur");
+  }
+
   return (
     <main className="container" style={{ padding: "28px 0" }}>
       <div className={styles.top}>
@@ -133,6 +163,7 @@ export function AdminLeadsClient() {
               <th>Speed</th>
               <th>Prix</th>
               <th>Paiement</th>
+              <th>Docs</th>
               <th>Traité</th>
               <th />
             </tr>
@@ -154,6 +185,39 @@ export function AdminLeadsClient() {
                   <td>{r.payment_status || "—"}</td>
                   <td>{r.handled ? "Oui" : "Non"}</td>
                   <td>
+                    {r.payment_status !== "paid" ? (
+                      <span className={styles.muted}>—</span>
+                    ) : (
+                      <div style={{ display: "grid", gap: 8, minWidth: 240 }}>
+                        {(["tarifs", "descriptif", "carnet"] as const).map(
+                          (t) => {
+                            const doc = (r.documents || []).find(
+                              (d) => d.doc_type === t,
+                            ) || {
+                              doc_type: t,
+                              status: "pending" as const,
+                              url: null,
+                            };
+
+                            return (
+                              <DocEditor
+                                key={t}
+                                leadId={r.id}
+                                docType={t}
+                                initialStatus={doc.status}
+                                initialUrl={doc.url || ""}
+                                onSave={async (args) => {
+                                  await upsertDoc(args);
+                                  await load();
+                                }}
+                              />
+                            );
+                          },
+                        )}
+                      </div>
+                    )}
+                  </td>
+                  <td>
                     <button
                       className={styles.smallBtn}
                       onClick={() => toggleHandled(r.id)}
@@ -173,7 +237,7 @@ export function AdminLeadsClient() {
 
             {!rows.length && !loading ? (
               <tr>
-                <td colSpan={9} className={styles.empty}>
+                <td colSpan={10} className={styles.empty}>
                   Aucun résultat.
                 </td>
               </tr>
@@ -182,5 +246,90 @@ export function AdminLeadsClient() {
         </table>
       </div>
     </main>
+  );
+}
+
+function DocEditor({
+  leadId,
+  docType,
+  initialStatus,
+  initialUrl,
+  onSave,
+}: {
+  leadId: string;
+  docType: DocType;
+  initialStatus: DocStatus;
+  initialUrl: string;
+  onSave: (args: {
+    leadId: string;
+    docType: DocType;
+    status: DocStatus;
+    url: string;
+  }) => Promise<void>;
+}) {
+  const [status, setStatus] = useState<DocStatus>(initialStatus);
+  const [url, setUrl] = useState(initialUrl);
+  const [saving, setSaving] = useState(false);
+
+  const label =
+    docType === "tarifs"
+      ? "Tarifs"
+      : docType === "descriptif"
+        ? "Descriptif"
+        : "Carnet";
+
+  async function save() {
+    try {
+      setSaving(true);
+      await onSave({
+        leadId,
+        docType,
+        status,
+        url: status === "ready" ? url : "",
+      });
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div
+      style={{
+        border: "1px solid var(--tt-border)",
+        borderRadius: 12,
+        padding: 10,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      <div style={{ fontWeight: 800, marginBottom: 6 }}>{label}</div>
+
+      <select
+        value={status}
+        onChange={(e) => setStatus(e.target.value as DocStatus)}
+      >
+        <option value="pending">pending</option>
+        <option value="ready">ready</option>
+      </select>
+
+      <input
+        type="url"
+        placeholder="URL PDF"
+        value={url}
+        onChange={(e) => setUrl(e.target.value)}
+        disabled={status !== "ready"}
+        style={{ width: "100%", marginTop: 8 }}
+      />
+
+      <button
+        type="button"
+        onClick={save}
+        disabled={saving}
+        style={{ marginTop: 8 }}
+      >
+        {saving ? "Enregistrement…" : "Enregistrer"}
+      </button>
+    </div>
   );
 }
