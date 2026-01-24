@@ -1,0 +1,159 @@
+.card {
+  border: 1px solid var(--tt-border);
+  border-radius: 18px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.media {
+  position: relative;
+  padding: 16px;
+  min-height: 170px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.mediaOverlay {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      1000px 240px at 20% 0%,
+      rgba(0, 0, 0, 0.18),
+      transparent 55%
+    ),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(0, 0, 0, 0.06));
+  pointer-events: none;
+}
+
+.bgEco {
+  background: linear-gradient(
+    135deg,
+    rgba(59, 130, 246, 0.22),
+    rgba(245, 158, 11, 0.16)
+  );
+}
+
+.bgComfort {
+  background: linear-gradient(
+    135deg,
+    rgba(16, 185, 129, 0.22),
+    rgba(59, 130, 246, 0.16)
+  );
+}
+
+.bgPremium {
+  background: linear-gradient(
+    135deg,
+    rgba(245, 158, 11, 0.26),
+    rgba(239, 68, 68, 0.16)
+  );
+}
+
+.mediaTop,
+.mediaBottom {
+  position: relative;
+  z-index: 1;
+}
+
+.mediaTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.destination {
+  font-weight: 950;
+  letter-spacing: 0.2px;
+  font-size: 18px;
+}
+
+.badge {
+  font-weight: 900;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(10px);
+}
+
+.kpis {
+  color: rgba(0, 0, 0, 0.72);
+  font-weight: 700;
+}
+
+.packLine {
+  margin-top: 8px;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.78);
+}
+
+.body {
+  padding: 14px 14px 16px;
+  display: grid;
+  gap: 10px;
+}
+
+.sectionTitle {
+  font-weight: 900;
+}
+
+.note {
+  color: var(--tt-muted);
+  font-weight: 600;
+}
+
+.docs {
+  display: grid;
+  gap: 10px;
+}
+
+.docRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--tt-border);
+  background: rgba(255, 255, 255, 0.65);
+}
+
+.docLeft {
+  display: grid;
+  gap: 2px;
+}
+
+.docLabel {
+  font-weight: 900;
+}
+
+.docStatus {
+  color: var(--tt-muted);
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.smallBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--tt-border);
+  background: rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+  color: var(--tt-text);
+  font-weight: 900;
+}
+
+.smallBtn:hover {
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.muted {
+  color: var(--tt-muted);
+  font-weight: 700;
+}

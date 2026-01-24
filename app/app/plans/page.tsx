@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../../../auth";
 import { getSql } from "../../../lib/db";
 import styles from "./Plans.module.scss";
+import { PlanCard } from "../../../components/Plans/PlanCard";
 
 type DocType = "tarifs" | "descriptif" | "carnet";
 
@@ -99,86 +100,20 @@ export default async function PlansPage() {
             const travelers = r.brief?.travelers ?? "—";
             const budgetMax = r.brief?.budgetMax ?? "—";
 
-            const docs = (r.documents || []) as LeadDoc[];
-            const docMap = new Map<DocType, LeadDoc>();
-            for (const d of docs) {
-              if (d?.doc_type) docMap.set(d.doc_type, d);
-            }
-
-            const isPaid = r.payment_status === "paid";
-
             return (
-              <article key={r.id} className={styles.card}>
-                <div className={styles.cardTop}>
-                  <div className={styles.titleRow}>
-                    <strong className={styles.destination}>
-                      {destination}
-                    </strong>
-                    <span className={styles.badge}>
-                      {r.payment_status || "—"}
-                    </span>
-                  </div>
-
-                  <div className={styles.meta}>
-                    {durationDays} jours · {travelers} voyageurs · ≤ {budgetMax}
-                    € / pers
-                  </div>
-
-                  <div className={styles.packRow}>
-                    Pack: <strong>{r.pack}</strong> · Délai:{" "}
-                    <strong>{r.speed}</strong> · Prix:{" "}
-                    <strong>{r.price_eur}€</strong>
-                  </div>
-                </div>
-
-                <div className={styles.docs}>
-                  <div className={styles.docsTitle}>Documents</div>
-
-                  {!isPaid ? (
-                    <div className={styles.docsNote}>
-                      Paiement requis pour débloquer les documents.
-                    </div>
-                  ) : null}
-
-                  <div className={styles.docsList}>
-                    {(["tarifs", "descriptif", "carnet"] as const).map(
-                      (type) => {
-                        const d = docMap.get(type) || null;
-                        const status = d?.status || "pending";
-                        const ready = status === "ready" && Boolean(d?.url);
-
-                        return (
-                          <div key={type} className={styles.docRow}>
-                            <div className={styles.docLeft}>
-                              <div className={styles.docLabel}>
-                                {DOC_LABELS[type]}
-                              </div>
-                              <div className={styles.docStatus}>
-                                {ready ? "Disponible" : "À venir"}
-                              </div>
-                            </div>
-
-                            <div className={styles.docRight}>
-                              {ready ? (
-                                <a
-                                  className={styles.smallBtn}
-                                  href={`/api/app/documents/${r.id}/${type}`}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                >
-                                  Télécharger
-                                </a>
-                              ) : (
-                                <span className={styles.muted}>—</span>
-                              )}
-                            </div>
-                          </div>
-                        );
-                      },
-                    )}
-                  </div>
-                </div>
-              </article>
+              <PlanCard
+                key={r.id}
+                id={r.id}
+                destination={destination}
+                durationDays={durationDays}
+                travelers={travelers}
+                budgetMax={budgetMax}
+                pack={r.pack}
+                speed={r.speed}
+                priceEUR={r.price_eur}
+                paymentStatus={r.payment_status}
+                documents={(r.documents || []) as any}
+              />
             );
           })}
         </div>
