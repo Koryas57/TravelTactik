@@ -20,14 +20,9 @@ const CATEGORIES = [
   "Mois Entier",
 ] as const;
 
-type Tier = "eco" | "comfort" | "premium";
+const TIERS = ["", "eco", "comfort", "premium"] as const;
 
-type TierRow = {
-  tier: Tier;
-  from_price_eur: number | null;
-  summary: string | null;
-  is_active: boolean;
-};
+type Tier = "eco" | "comfort" | "premium";
 
 type OfferRow = {
   id: string;
@@ -36,26 +31,16 @@ type OfferRow = {
   destination: string;
   image_url: string | null;
   category: string | null;
-  min_price_eur: number | null;
-  tiers: TierRow[] | null;
+  tier: Tier | null;
+  price_from_eur: number | null;
+  duration_days: number | null;
+  persons: number | null;
+  departure_city: string | null;
+  departure_airport: string | null;
+  is_published: boolean;
+  meta: any;
   updated_at: string;
 };
-
-function normalizeTiers(tiers: TierRow[] | null | undefined) {
-  const map = new Map<Tier, TierRow>();
-  for (const t of tiers || []) map.set(t.tier, t);
-  return (["eco", "comfort", "premium"] as const).map((k) => {
-    const v = map.get(k);
-    return (
-      v || {
-        tier: k,
-        from_price_eur: null,
-        summary: "",
-        is_active: true,
-      }
-    );
-  });
-}
 
 export function AdminOffersClient() {
   const [rows, setRows] = useState<OfferRow[]>([]);
@@ -65,15 +50,17 @@ export function AdminOffersClient() {
   const [q, setQ] = useState("");
   const [category, setCategory] = useState("");
   const [tier, setTier] = useState("");
+  const [published, setPublished] = useState("");
 
   const qs = useMemo(() => {
     const p = new URLSearchParams();
     if (q.trim()) p.set("q", q.trim());
     if (category) p.set("category", category);
     if (tier) p.set("tier", tier);
+    if (published) p.set("published", published);
     p.set("limit", "200");
     return p.toString();
-  }, [q, category, tier]);
+  }, [q, category, tier, published]);
 
   async function load() {
     try {
@@ -99,31 +86,28 @@ export function AdminOffersClient() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [qs]);
 
-  async function patchOffer(input: {
-    id: string;
-    title?: string;
-    destination?: string;
-    image_url?: string;
+  async function createOffer(input: {
+    title: string;
+    destination: string;
     category?: string | null;
+    tier?: string | null;
   }) {
     const res = await fetch("/api/admin/offers", {
-      method: "PATCH",
+      method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(input),
     });
-    const data = (await res.json()) as { ok: boolean; error?: string };
+    const data = (await res.json()) as {
+      ok: boolean;
+      row?: OfferRow;
+      error?: string;
+    };
     if (!res.ok || !data.ok) throw new Error(data.error || "Erreur serveur");
   }
 
-  async function upsertTier(input: {
-    offerId: string;
-    tier: Tier;
-    from_price_eur: number | null;
-    summary: string;
-    is_active: boolean;
-  }) {
-    const res = await fetch("/api/admin/offers/tiers", {
-      method: "POST",
+  async function patchOffer(input: Partial<OfferRow> & { id: string }) {
+    const res = await fetch("/api/admin/offers", {
+      method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(input),
     });
@@ -137,8 +121,7 @@ export function AdminOffersClient() {
         <div>
           <h1 className={styles.h1}>Admin — Offres</h1>
           <p className={styles.sub}>
-            Catalogue éditable (catégories, prix “à partir de”, contenus
-            Eco/Confort/Premium).
+            Créer / éditer les cards affichées sur /offres.
           </p>
         </div>
 
@@ -147,13 +130,20 @@ export function AdminOffersClient() {
         </button>
       </div>
 
+      <CreateOffer
+        onCreate={async (v) => {
+          await createOffer(v);
+          await load();
+        }}
+      />
+
       <div className={styles.filters}>
         <label className={styles.filter}>
           <span>Recherche</span>
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Bangkok, Lisbonne, tokyo-premium…"
+            placeholder="Bangkok, Lisbonne, CDG…"
           />
         </label>
 
@@ -172,12 +162,25 @@ export function AdminOffersClient() {
         </label>
 
         <label className={styles.filter}>
-          <span>Tier</span>
+          <span>Gamme</span>
           <select value={tier} onChange={(e) => setTier(e.target.value)}>
+            {TIERS.map((t) => (
+              <option key={t || "__all"} value={t}>
+                {t ? t : "Toutes"}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className={styles.filter}>
+          <span>Publié</span>
+          <select
+            value={published}
+            onChange={(e) => setPublished(e.target.value)}
+          >
             <option value="">Tous</option>
-            <option value="eco">Eco</option>
-            <option value="comfort">Confort</option>
-            <option value="premium">Premium</option>
+            <option value="true">Publié</option>
+            <option value="false">Brouillon</option>
           </select>
         </label>
       </div>
@@ -189,12 +192,8 @@ export function AdminOffersClient() {
           <OfferEditor
             key={o.id}
             offer={o}
-            onPatch={async (p) => {
+            onSave={async (p) => {
               await patchOffer({ id: o.id, ...p });
-              await load();
-            }}
-            onUpsertTier={async (t) => {
-              await upsertTier({ offerId: o.id, ...t });
               await load();
             }}
           />
@@ -208,24 +207,88 @@ export function AdminOffersClient() {
   );
 }
 
+function CreateOffer({
+  onCreate,
+}: {
+  onCreate: (v: {
+    title: string;
+    destination: string;
+    category?: string | null;
+    tier?: string | null;
+  }) => Promise<void>;
+}) {
+  const [title, setTitle] = useState("");
+  const [destination, setDestination] = useState("");
+  const [category, setCategory] = useState("");
+  const [tier, setTier] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  async function submit() {
+    if (title.trim().length < 2 || destination.trim().length < 2) return;
+    setSaving(true);
+    try {
+      await onCreate({
+        title: title.trim(),
+        destination: destination.trim(),
+        category: category ? category : null,
+        tier: tier ? tier : null,
+      });
+      setTitle("");
+      setDestination("");
+      setCategory("");
+      setTier("");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <section style={{ margin: "14px 0 18px" }}>
+      <div style={{ fontWeight: 900, marginBottom: 10 }}>Créer une offre</div>
+      <div
+        style={{
+          display: "grid",
+          gap: 10,
+          gridTemplateColumns: "1.2fr 1fr 0.9fr 0.7fr auto",
+        }}
+      >
+        <input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Titre (ex: Bangkok malin 7j)"
+        />
+        <input
+          value={destination}
+          onChange={(e) => setDestination(e.target.value)}
+          placeholder="Destination"
+        />
+        <select value={category} onChange={(e) => setCategory(e.target.value)}>
+          {CATEGORIES.map((c) => (
+            <option key={c || "__all"} value={c}>
+              {c ? c : "Catégorie…"}
+            </option>
+          ))}
+        </select>
+        <select value={tier} onChange={(e) => setTier(e.target.value)}>
+          <option value="">Gamme…</option>
+          <option value="eco">Eco</option>
+          <option value="comfort">Confort</option>
+          <option value="premium">Premium</option>
+        </select>
+        <button type="button" onClick={submit} disabled={saving}>
+          {saving ? "…" : "Créer"}
+        </button>
+      </div>
+    </section>
+  );
+}
+
 function OfferEditor({
   offer,
-  onPatch,
-  onUpsertTier,
+  onSave,
 }: {
   offer: OfferRow;
-  onPatch: (p: {
-    title?: string;
-    destination?: string;
-    image_url?: string;
-    category?: string | null;
-  }) => Promise<void>;
-  onUpsertTier: (t: {
-    tier: Tier;
-    from_price_eur: number | null;
-    summary: string;
-    is_active: boolean;
-  }) => Promise<void>;
+  onSave: (p: Partial<OfferRow>) => Promise<void>;
 }) {
   const [saving, setSaving] = useState(false);
 
@@ -233,17 +296,44 @@ function OfferEditor({
   const [destination, setDestination] = useState(offer.destination);
   const [imageUrl, setImageUrl] = useState(offer.image_url || "");
   const [category, setCategory] = useState(offer.category || "");
+  const [tier, setTier] = useState(offer.tier || "");
+  const [priceFrom, setPriceFrom] = useState<string>(
+    offer.price_from_eur === null ? "" : String(offer.price_from_eur),
+  );
+  const [durationDays, setDurationDays] = useState<string>(
+    offer.duration_days === null ? "" : String(offer.duration_days),
+  );
+  const [persons, setPersons] = useState<string>(
+    offer.persons === null ? "" : String(offer.persons),
+  );
+  const [depCity, setDepCity] = useState(offer.departure_city || "");
+  const [depAirport, setDepAirport] = useState(offer.departure_airport || "");
+  const [published, setPublished] = useState<boolean>(offer.is_published);
 
-  const tiers = normalizeTiers(offer.tiers);
-
-  async function saveBase() {
+  async function save() {
     setSaving(true);
     try {
-      await onPatch({
-        title,
-        destination,
-        image_url: imageUrl || "",
+      await onSave({
+        title: title.trim(),
+        destination: destination.trim(),
+        image_url: imageUrl.trim() || null,
         category: category ? category : null,
+        tier: tier ? (tier as any) : null,
+        price_from_eur:
+          priceFrom.trim() === ""
+            ? null
+            : Math.max(0, Math.trunc(Number(priceFrom))),
+        duration_days:
+          durationDays.trim() === ""
+            ? null
+            : Math.max(1, Math.trunc(Number(durationDays))),
+        persons:
+          persons.trim() === ""
+            ? null
+            : Math.max(1, Math.trunc(Number(persons))),
+        departure_city: depCity.trim() || null,
+        departure_airport: depAirport.trim() || null,
+        is_published: published,
       });
     } finally {
       setSaving(false);
@@ -256,14 +346,10 @@ function OfferEditor({
         <div>
           <div className={styles.slug}>{offer.slug}</div>
           <div className={styles.minPrice}>
-            À partir de <strong>{offer.min_price_eur ?? "—"}€</strong>
+            À partir de <strong>{offer.price_from_eur ?? "—"}€</strong>
           </div>
         </div>
-        <button
-          className={styles.smallBtn}
-          onClick={saveBase}
-          disabled={saving}
-        >
+        <button className={styles.smallBtn} onClick={save} disabled={saving}>
           {saving ? "…" : "Enregistrer"}
         </button>
       </div>
@@ -304,108 +390,74 @@ function OfferEditor({
             ))}
           </select>
         </label>
-      </div>
 
-      <div className={styles.tiers}>
-        {tiers.map((t) => (
-          <TierEditor
-            key={t.tier}
-            tier={t}
-            onSave={async (next) => {
-              setSaving(true);
-              try {
-                await onUpsertTier(next);
-              } finally {
-                setSaving(false);
-              }
-            }}
+        <label className={styles.field}>
+          <span>Gamme (étiquette)</span>
+          <select value={tier} onChange={(e) => setTier(e.target.value)}>
+            <option value="">—</option>
+            <option value="eco">Eco</option>
+            <option value="comfort">Confort</option>
+            <option value="premium">Premium</option>
+          </select>
+        </label>
+
+        <label className={styles.field}>
+          <span>À partir de (€)</span>
+          <input
+            value={priceFrom}
+            onChange={(e) => setPriceFrom(e.target.value)}
+            inputMode="numeric"
+            placeholder="ex: 199"
           />
-        ))}
+        </label>
+
+        <label className={styles.field}>
+          <span>Durée (jours)</span>
+          <input
+            value={durationDays}
+            onChange={(e) => setDurationDays(e.target.value)}
+            inputMode="numeric"
+            placeholder="ex: 7"
+          />
+        </label>
+
+        <label className={styles.field}>
+          <span>Personnes</span>
+          <input
+            value={persons}
+            onChange={(e) => setPersons(e.target.value)}
+            inputMode="numeric"
+            placeholder="ex: 2"
+          />
+        </label>
+
+        <label className={styles.field}>
+          <span>Ville départ</span>
+          <input
+            value={depCity}
+            onChange={(e) => setDepCity(e.target.value)}
+            placeholder="ex: Marseille"
+          />
+        </label>
+
+        <label className={styles.field}>
+          <span>Aéroport départ</span>
+          <input
+            value={depAirport}
+            onChange={(e) => setDepAirport(e.target.value)}
+            placeholder="ex: MRS / CDG"
+          />
+        </label>
+
+        <label className={styles.check}>
+          <input
+            type="checkbox"
+            checked={published}
+            onChange={(e) => setPublished(e.target.checked)}
+          />
+          <span>Publié (visible sur /offres)</span>
+        </label>
       </div>
     </article>
-  );
-}
-
-function TierEditor({
-  tier,
-  onSave,
-}: {
-  tier: TierRow;
-  onSave: (t: {
-    tier: Tier;
-    from_price_eur: number | null;
-    summary: string;
-    is_active: boolean;
-  }) => Promise<void>;
-}) {
-  const [price, setPrice] = useState<string>(
-    tier.from_price_eur === null ? "" : String(tier.from_price_eur),
-  );
-  const [summary, setSummary] = useState<string>(tier.summary || "");
-  const [isActive, setIsActive] = useState<boolean>(tier.is_active);
-  const [saving, setSaving] = useState(false);
-
-  const label =
-    tier.tier === "eco"
-      ? "Eco"
-      : tier.tier === "comfort"
-        ? "Confort"
-        : "Premium";
-
-  async function save() {
-    setSaving(true);
-    try {
-      const p =
-        price.trim() === "" ? null : Math.max(0, Math.trunc(Number(price)));
-      if (price.trim() !== "" && Number.isNaN(p as any)) return;
-
-      await onSave({
-        tier: tier.tier,
-        from_price_eur: p,
-        summary,
-        is_active: isActive,
-      });
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  return (
-    <div className={styles.tier}>
-      <div className={styles.tierTop}>
-        <div className={styles.tierName}>{label}</div>
-        <button className={styles.smallBtn} onClick={save} disabled={saving}>
-          {saving ? "…" : "Save"}
-        </button>
-      </div>
-
-      <label className={styles.field}>
-        <span>À partir de (€)</span>
-        <input
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-          inputMode="numeric"
-          placeholder="ex: 199"
-        />
-      </label>
-
-      <label className={styles.field}>
-        <span>Résumé (1–2 lignes)</span>
-        <textarea
-          value={summary}
-          onChange={(e) => setSummary(e.target.value)}
-          rows={3}
-        />
-      </label>
-
-      <label className={styles.check}>
-        <input
-          type="checkbox"
-          checked={isActive}
-          onChange={(e) => setIsActive(e.target.checked)}
-        />
-        <span>Actif</span>
-      </label>
-    </div>
   );
 }

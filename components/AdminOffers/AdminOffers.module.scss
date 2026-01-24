@@ -248,6 +248,52 @@
   margin-top: 14px;
 }
 
+.createCard {
+  border: 1px solid var(--tt-border);
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 18px;
+  padding: 16px;
+  margin: 14px 0 18px;
+}
+
+.createTitle {
+  font-weight: 900;
+  margin-bottom: 10px;
+}
+
+.createGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.createActions {
+  margin-top: 12px;
+  display: grid;
+  gap: 10px;
+}
+
+.primaryBtn {
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 0;
+  background: var(--tt-blue);
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.primaryBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (min-width: 860px) {
+  .createGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 @media (max-width: 780px) {
   .formGrid {
     grid-template-columns: 1fr;
