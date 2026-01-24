@@ -3,14 +3,45 @@ export const runtime = "nodejs";
 import { NextResponse } from "next/server";
 import { put } from "@vercel/blob";
 
+type DocType = "tarifs" | "descriptif" | "carnet";
+
+function isUuid(v: string) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+    v,
+  );
+}
+
+function isDocType(v: unknown): v is DocType {
+  return v === "tarifs" || v === "descriptif" || v === "carnet";
+}
+
+function safeFilename(name: string) {
+  return name.replace(/[^a-zA-Z0-9._-]/g, "_");
+}
+
 export async function POST(req: Request) {
   try {
     const form = await req.formData();
+
     const file = form.get("file");
+    const leadId = String(form.get("leadId") || "");
+    const docType = form.get("docType");
 
     if (!(file instanceof File)) {
       return NextResponse.json(
         { ok: false, error: "Missing file" },
+        { status: 400 },
+      );
+    }
+    if (!isUuid(leadId)) {
+      return NextResponse.json(
+        { ok: false, error: "Invalid leadId" },
+        { status: 400 },
+      );
+    }
+    if (!isDocType(docType)) {
+      return NextResponse.json(
+        { ok: false, error: "Invalid docType" },
         { status: 400 },
       );
     }
@@ -22,20 +53,37 @@ export async function POST(req: Request) {
       );
     }
 
-    const safeName = (
-      form.get("name")?.toString() ||
-      file.name ||
-      "document.pdf"
-    ).replace(/[^a-zA-Z0-9._-]/g, "_");
+    // 25 MB (ajuste si besoin)
+    const MAX = 25 * 1024 * 1024;
+    if (file.size > MAX) {
+      return NextResponse.json(
+        { ok: false, error: "File too large" },
+        { status: 413 },
+      );
+    }
 
-    // Stockage public par défaut chez Blob (OK car accès final filtré via ta route /api/app/documents)
-    // Si tu veux du privé strict, on passera à signed URLs plus tard.
-    const blob = await put(`traveltactik/${Date.now()}_${safeName}`, file, {
+    const original = file.name || "document.pdf";
+    const base = safeFilename(
+      original.toLowerCase().endsWith(".pdf") ? original : `${original}.pdf`,
+    );
+
+    const pathname = `traveltactik/leads/${leadId}/${docType}/${Date.now()}_${base}`;
+
+    // Vercel Blob: access "public" uniquement (pas de "private" via put)
+    const blob = await put(pathname, file, {
       access: "public",
       contentType: "application/pdf",
     });
 
-    return NextResponse.json({ ok: true, url: blob.url }, { status: 200 });
+    return NextResponse.json(
+      {
+        ok: true,
+        url: blob.url,
+        pathname: blob.pathname,
+        downloadUrl: blob.downloadUrl,
+      },
+      { status: 200 },
+    );
   } catch (err) {
     console.error("[admin/uploads] error:", err);
     return NextResponse.json(

@@ -1,7 +1,6 @@
 export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../../../../auth";
 import { getSql } from "../../../../../../lib/db";
@@ -13,14 +12,16 @@ function isUuid(v: string) {
     v,
   );
 }
-
 function isDocType(v: string): v is DocType {
   return v === "tarifs" || v === "descriptif" || v === "carnet";
 }
 
-type Ctx = { params: Promise<{ leadId: string; docType: string }> };
+export async function GET(
+  _req: Request,
+  { params }: { params: Promise<{ leadId: string; docType: string }> },
+) {
+  const { leadId, docType } = await params;
 
-export async function GET(_req: NextRequest, ctx: Ctx) {
   const session = await getServerSession(authOptions);
   const email = session?.user?.email?.toLowerCase().trim();
 
@@ -30,8 +31,6 @@ export async function GET(_req: NextRequest, ctx: Ctx) {
       { status: 401 },
     );
   }
-
-  const { leadId, docType } = await ctx.params;
 
   if (!isUuid(leadId)) {
     return NextResponse.json(
@@ -49,20 +48,19 @@ export async function GET(_req: NextRequest, ctx: Ctx) {
   try {
     const sql = getSql();
 
-    // 1) Ownership: lead.email doit matcher la session
+    // Ownership check
     const leadRows = await sql`
-      select id, email, payment_status
+      select id, email
       from leads
       where id = ${leadId}::uuid
       limit 1;
     `;
     const lead = leadRows?.[0];
-    if (!lead) {
+    if (!lead)
       return NextResponse.json(
         { ok: false, error: "Not found" },
         { status: 404 },
       );
-    }
 
     if (String(lead.email).toLowerCase().trim() !== email) {
       return NextResponse.json(
@@ -71,7 +69,7 @@ export async function GET(_req: NextRequest, ctx: Ctx) {
       );
     }
 
-    // 2) Doc doit être ready + url
+    // Doc ready + url
     const docRows = await sql`
       select status, url
       from lead_documents
@@ -80,12 +78,11 @@ export async function GET(_req: NextRequest, ctx: Ctx) {
       limit 1;
     `;
     const doc = docRows?.[0];
-    if (!doc) {
+    if (!doc)
       return NextResponse.json(
         { ok: false, error: "Not found" },
         { status: 404 },
       );
-    }
 
     if (doc.status !== "ready" || !doc.url) {
       return NextResponse.json(
@@ -94,10 +91,28 @@ export async function GET(_req: NextRequest, ctx: Ctx) {
       );
     }
 
-    // 3) Redirect vers l’URL (plus tard: signed URL)
-    return NextResponse.redirect(doc.url, { status: 302 });
+    // Stream server-side (no redirect => blob URL not exposed)
+    const upstream = await fetch(String(doc.url));
+    if (!upstream.ok || !upstream.body) {
+      return NextResponse.json(
+        { ok: false, error: "Upstream fetch failed" },
+        { status: 502 },
+      );
+    }
+
+    const filename = `traveltactik-${docType}-${leadId}.pdf`;
+    return new Response(upstream.body, {
+      status: 200,
+      headers: {
+        "Content-Type":
+          upstream.headers.get("content-type") || "application/pdf",
+        "Content-Disposition": `attachment; filename="${filename}"`,
+        // Optionnel: éviter caches partagés
+        "Cache-Control": "private, no-store",
+      },
+    });
   } catch (err) {
-    console.error("[app/documents/:leadId/:docType] error:", err);
+    console.error("[app/documents] error:", err);
     return NextResponse.json(
       { ok: false, error: "Server error" },
       { status: 500 },

@@ -301,7 +301,9 @@ function DocEditor({
     try {
       const fd = new FormData();
       fd.set("file", file);
-      fd.set("name", `${leadId}_${docType}.pdf`);
+      fd.set("leadId", leadId);
+      fd.set("docType", docType);
+      fd.set("name", `${leadId}_${docType}.pdf`); // optionnel (si endpoint l’utilise encore)
 
       const res = await fetch("/api/admin/uploads", {
         method: "POST",

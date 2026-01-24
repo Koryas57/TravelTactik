@@ -1,7 +1,6 @@
 export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 import { getSql } from "../../../../../../lib/db";
 
 type DocType = "tarifs" | "descriptif" | "carnet";
@@ -21,8 +20,20 @@ function isDocStatus(v: unknown): v is DocStatus {
   return v === "pending" || v === "ready";
 }
 
+function isSafeHttpUrl(v: string) {
+  try {
+    const u = new URL(v);
+    if (u.protocol !== "https:") return false;
+    // option: restreindre à Vercel Blob
+    // if (!u.hostname.endsWith("blob.vercel-storage.com")) return false;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export async function POST(
-  _req: NextRequest,
+  req: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
@@ -36,7 +47,7 @@ export async function POST(
 
   let body: { docType?: unknown; status?: unknown; url?: unknown };
   try {
-    body = (await _req.json()) as any;
+    body = (await req.json()) as any;
   } catch {
     return NextResponse.json(
       { ok: false, error: "Invalid JSON" },
@@ -61,7 +72,6 @@ export async function POST(
     );
   }
 
-  // Règle simple: si ready => url obligatoire ; si pending => url forcée à null
   const nextUrl =
     status === "ready"
       ? typeof url === "string" && url.trim().length > 0
@@ -69,17 +79,38 @@ export async function POST(
         : null
       : null;
 
-  if (status === "ready" && !nextUrl) {
-    return NextResponse.json(
-      { ok: false, error: "Missing url for ready document" },
-      { status: 400 },
-    );
+  if (status === "ready") {
+    if (!nextUrl) {
+      return NextResponse.json(
+        { ok: false, error: "Missing url for ready document" },
+        { status: 400 },
+      );
+    }
+    if (!isSafeHttpUrl(nextUrl)) {
+      return NextResponse.json(
+        { ok: false, error: "Invalid url" },
+        { status: 400 },
+      );
+    }
   }
 
   try {
     const sql = getSql();
 
-    // upsert (au cas où la ligne n’existe pas encore)
+    // Optionnel mais propre: vérifier que le lead existe
+    const lead = await sql`
+      select id
+      from leads
+      where id = ${id}::uuid
+      limit 1;
+    `;
+    if (!lead?.length) {
+      return NextResponse.json(
+        { ok: false, error: "Lead not found" },
+        { status: 404 },
+      );
+    }
+
     const rows = await sql`
       insert into lead_documents (lead_id, doc_type, status, url)
       values (${id}::uuid, ${docType}, ${status}, ${nextUrl})
