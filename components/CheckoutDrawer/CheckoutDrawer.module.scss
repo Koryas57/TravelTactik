@@ -289,3 +289,52 @@
   background: rgba(255, 0, 0, 0.06);
   font-size: 14px;
 }
+
+.tabs {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.tab {
+  height: 40px;
+  border-radius: 999px;
+  border: 1px solid var(--tt-border);
+  background: #fff;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.tabActive {
+  border-color: rgba(30, 64, 255, 0.28);
+  box-shadow: 0 0 0 4px rgba(30, 64, 255, 0.09);
+}
+
+.how {
+  margin-top: 14px;
+  border: 1px solid var(--tt-border);
+  border-radius: 14px;
+  padding: 12px;
+  background: rgba(248, 250, 252, 0.7);
+}
+
+.howList {
+  margin: 0;
+  padding-left: 18px;
+  line-height: 1.7;
+  font-weight: 750;
+  color: rgba(15, 23, 42, 0.9);
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+@media (min-width: 520px) {
+  .grid2 {
+    grid-template-columns: 1fr 1fr;
+  }
+}

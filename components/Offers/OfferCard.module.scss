@@ -1,0 +1,137 @@
+.card {
+  border: 1px solid var(--tt-border);
+  border-radius: 18px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.65);
+}
+
+.media {
+  position: relative;
+  height: 150px;
+}
+
+.bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      1200px 220px at 20% 0%,
+      rgba(0, 0, 0, 0.08),
+      transparent 55%
+    ),
+    linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(245, 158, 11, 0.18));
+  background-size: cover;
+  background-position: center;
+}
+
+/* badges on image */
+.badges {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: calc(100% - 70px);
+}
+
+.badge,
+.badgeAlt {
+  border-radius: 999px;
+  padding: 7px 10px;
+  font-size: 12px;
+  font-weight: 900;
+  border: 1px solid var(--tt-border);
+  backdrop-filter: blur(6px);
+}
+
+.badge {
+  background: #ffa00075;
+  border-color: #f59e0b00;
+}
+
+.badgeAlt {
+  border-color: rgba(255, 255, 255, 0.452);
+  background: rgb(0, 0, 0);
+  color: #fff;
+}
+
+.heart {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  border: 1px solid var(--tt-border);
+  background: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.heart:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.heartOn {
+  color: #fff;
+  background: rgba(239, 68, 68, 0.95);
+  border-color: rgba(239, 68, 68, 0.65);
+}
+
+.body {
+  padding: 12px;
+  display: grid;
+  gap: 8px;
+}
+
+.titleRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.title {
+  font-weight: 900;
+}
+
+.destination {
+  color: var(--tt-muted);
+  font-weight: 700;
+}
+
+.meta {
+  display: grid;
+  gap: 4px;
+  color: var(--tt-muted);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.price {
+  color: inherit;
+  font-weight: 900;
+}
+
+.secondary {
+  color: var(--tt-muted);
+  font-weight: 650;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag {
+  font-size: 12px;
+  font-weight: 800;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--tt-border);
+  background: rgba(255, 255, 255, 0.65);
+}

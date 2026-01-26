@@ -21,7 +21,6 @@ export function PageClient() {
   const [selectedPlan, setSelectedPlan] = useState<ComfortLevel | null>(null);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
 
-  // Load on first mount
   useEffect(() => {
     const stored = loadState();
     if (!stored) return;
@@ -29,7 +28,6 @@ export function PageClient() {
     setSelectedPlan(stored.selectedPlan);
   }, []);
 
-  // Save on change
   useEffect(() => {
     saveState({ brief, selectedPlan });
   }, [brief, selectedPlan]);
@@ -42,28 +40,12 @@ export function PageClient() {
     setCheckoutOpen(false);
   }
 
-  function onSelectPlan(plan: ComfortLevel) {
-    setSelectedPlan(plan);
-    setCheckoutOpen(true);
-  }
-
   return (
     <>
-      <Header onCtaClick={openCheckout} />
+      <Header onCtaClick={openCheckout} title="Appel découverte gratuit" />
 
       <main className="container" style={{ padding: "32px 0" }}>
-        <h1 style={{ margin: "18px 0 10px" }}>Même voyage. Meilleur plan.</h1>
-        <p style={{ margin: 0, color: "var(--tt-muted)" }}>
-          Tu réserves. Je t’aide à optimiser budget, confort et itinéraire.
-        </p>
-
-        <HomeClient
-          brief={brief}
-          onBriefChange={setBrief}
-          selectedPlan={selectedPlan}
-          onSelectPlan={onSelectPlan}
-          onOpenCheckout={openCheckout}
-        />
+        <HomeClient />
       </main>
 
       <CheckoutDrawer

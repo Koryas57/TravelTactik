@@ -1,0 +1,95 @@
+.section {
+  margin-top: 18px;
+}
+
+.card {
+  border: 1px solid var(--tt-border);
+  border-radius: var(--tt-radius-lg);
+  background: var(--tt-card);
+  box-shadow: var(--tt-shadow);
+  padding: 16px;
+}
+
+.kicker {
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--tt-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.h2 {
+  margin: 8px 0 8px;
+  font-size: 22px;
+  line-height: 1.2;
+}
+
+.p {
+  margin: 0;
+  color: rgba(15, 23, 42, 0.85);
+  font-weight: 650;
+  line-height: 1.65;
+  max-width: 80ch;
+}
+
+.notice {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(2, 6, 23, 0.04);
+  border: 1px solid var(--tt-border);
+  font-weight: 700;
+  color: rgba(15, 23, 42, 0.9);
+  line-height: 1.55;
+}
+
+.social {
+  margin-top: 14px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  border: 1px solid var(--tt-border);
+  background: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  box-shadow: var(--tt-shadow);
+}
+
+/* Icônes “tendance et colorées” en pur CSS (tu peux remplacer par des SVG plus tard) */
+.ig,
+.tt,
+.yt,
+.fb {
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  display: block;
+}
+
+.ig {
+  background: linear-gradient(135deg, #f58529, #dd2a7b, #8134af, #515bd4);
+}
+.tt {
+  background: linear-gradient(135deg, #00f2ea, #000, #ff0050);
+}
+.yt {
+  background: linear-gradient(135deg, #ff0000, #b30000);
+}
+.fb {
+  background: linear-gradient(135deg, #1877f2, #0b4aa2);
+}
+
+.socialHint {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--tt-muted);
+  font-weight: 650;
+}

@@ -2,7 +2,7 @@ import styles from "./FAQ.module.scss";
 
 const items = [
   {
-    q: "Pourquoi payer alors que Skyscanner / Booking existent ?",
+    q: "Pourquoi payer alors que les comparateurs de vols existent ?",
     a: "Parce que la plupart des gens réservent vite, mal, et surpayent. Ici tu as une stratégie: choix, arbitrages, alternatives, et surtout un plan cohérent (temps + budget + confort).",
   },
   {

@@ -35,9 +35,11 @@ export function HeaderMenu({ openCheckout }: Props) {
   const navItems: NavItem[] = useMemo(() => {
     if (isHome) {
       return [
-        { label: "Brief", href: "/#brief" },
-        { label: "Offres", href: "/offres" },
+        { label: "Appel gratuit", href: "/#appel" },
+        { label: "Offres", href: "/#offres" },
+        { label: "Carnets", href: "/#documents" },
         { label: "FAQ", href: "/#faq" },
+        { label: "TravelTactik", href: "/#traveltactik" },
       ];
     }
     return [{ label: "Accueil", href: "/" }];
@@ -148,7 +150,7 @@ export function HeaderMenu({ openCheckout }: Props) {
                     openCheckout();
                   }}
                 >
-                  Obtenir mon plan
+                  Appel découverte gratuit
                 </button>
               </div>
             ) : null}
