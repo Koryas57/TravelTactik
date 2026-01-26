@@ -207,18 +207,18 @@
   font-size: 12px;
   font-weight: 900;
   border: 1px solid var(--tt-border);
-  background: rgba(255, 255, 255, 0.78);
   backdrop-filter: blur(6px);
 }
 
 .badge {
-  border-color: rgba(245, 158, 11, 0.45);
-  background: rgba(245, 158, 11, 0.18);
+  background: #ffa00075;
+  border-color: #f59e0b00;
 }
 
 .badgeAlt {
-  border-color: rgba(59, 130, 246, 0.45);
-  background: rgba(59, 130, 246, 0.14);
+  border-color: rgba(255, 255, 255, 0.452);
+  background: rgb(0, 0, 0);
+  color: #fff;
 }
 
 .heart {

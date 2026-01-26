@@ -92,6 +92,20 @@ function buildQS(input: {
   return p.toString();
 }
 
+/**
+ * Parse JSON uniquement si le Content-Type est JSON.
+ * Retourne null si réponse non-JSON (HTML, redirect, empty, etc.).
+ */
+async function safeJson<T>(res: Response): Promise<T | null> {
+  const ct = (res.headers.get("content-type") || "").toLowerCase();
+  if (!ct.includes("application/json")) return null;
+  try {
+    return (await res.json()) as T;
+  } catch {
+    return null;
+  }
+}
+
 export function OffersClient() {
   const [offers, setOffers] = useState<Offer[]>([]);
   const [favIds, setFavIds] = useState<Set<string>>(new Set());
@@ -139,7 +153,7 @@ export function OffersClient() {
     setSort(isSort(sort0) ? sort0 : "recent");
   }, []);
 
-  // 2) Quand filtres changent: pousse dans l’URL + reload data
+  // 2) Quand filtres changent: pousse dans l’URL
   const qs = useMemo(() => {
     return buildQS({
       q,
@@ -165,29 +179,50 @@ export function OffersClient() {
     setError(null);
 
     try {
-      const res = await fetch(`/api/offers?${qs}`, { cache: "no-store" });
-      const data = (await res.json()) as {
+      // OFFRES
+      const res = await fetch(`/api/offers?${qs}`, {
+        cache: "no-store",
+        redirect: "follow",
+      });
+
+      const data = await safeJson<{
         ok: boolean;
         rows?: Offer[];
         error?: string;
-      };
+      }>(res);
 
-      if (!res.ok || !data.ok) {
-        throw new Error(data.error || "Erreur serveur");
+      if (!res.ok || !data?.ok) {
+        const msg =
+          data?.error ||
+          `Erreur serveur (offers): ${res.status} ${res.statusText}`;
+        throw new Error(msg);
       }
 
       setOffers(data.rows || []);
 
-      // favoris (si 401 -> ignore)
-      const favRes = await fetch("/api/app/favorites", { cache: "no-store" });
-      if (favRes.status === 401) {
+      // FAVORIS (non connecté => ignore, et surtout ne pas parser du HTML)
+      const favRes = await fetch("/api/app/favorites", {
+        cache: "no-store",
+        redirect: "manual", // important: évite que fetch suive une redirection vers du HTML
+      });
+
+      // Si redirect (302/307/308) ou 401 => pas connecté
+      if (
+        favRes.status === 401 ||
+        favRes.status === 302 ||
+        favRes.status === 307 ||
+        favRes.status === 308
+      ) {
         setFavIds(new Set());
       } else {
-        const favData = (await favRes.json()) as {
+        const favData = await safeJson<{
           ok: boolean;
           ids?: string[];
-        };
-        if (favRes.ok && favData.ok) setFavIds(new Set(favData.ids || []));
+          error?: string;
+        }>(favRes);
+
+        if (favRes.ok && favData?.ok) setFavIds(new Set(favData.ids || []));
+        else setFavIds(new Set());
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Erreur inconnue");
@@ -208,14 +243,31 @@ export function OffersClient() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ offerId }),
+        redirect: "manual",
       });
 
-      if (res.status === 401) {
+      if (
+        res.status === 401 ||
+        res.status === 302 ||
+        res.status === 307 ||
+        res.status === 308
+      ) {
         window.location.href = `/login?callbackUrl=${encodeURIComponent(currentUrl)}`;
         return;
       }
 
-      const data = (await res.json()) as { ok: boolean; liked?: boolean };
+      const data = await safeJson<{
+        ok: boolean;
+        liked?: boolean;
+        error?: string;
+      }>(res);
+
+      // Si ce n'est pas du JSON, c’est quasi sûr que c’est une page HTML de login.
+      if (!data) {
+        window.location.href = `/login?callbackUrl=${encodeURIComponent(currentUrl)}`;
+        return;
+      }
+
       if (!res.ok || !data.ok) return;
 
       setFavIds((prev) => {
@@ -399,7 +451,6 @@ export function OffersClient() {
                   }
                 />
 
-                {/* Badges (tu styliseras premium) */}
                 <div className={styles.badges}>
                   {o.tier ? (
                     <span className={styles.badge}>
