@@ -41,6 +41,7 @@ export default function RootLayout({
         <AuthProvider>
           <div className="appShell">
             <div className="appMain">{children}</div>
+            <Analytics />
             <Footer />
           </div>
         </AuthProvider>
