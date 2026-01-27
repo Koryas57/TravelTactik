@@ -42,9 +42,9 @@ export function PageClient() {
 
   return (
     <>
-      <Header onCtaClick={openCheckout} title="Appel découverte gratuit" />
+      <Header onCtaClick={openCheckout} title="Appel gratuit" />
 
-      <main className="container" style={{ padding: "32px 0" }}>
+      <main className="container" style={{ padding: "25px 0" }}>
         <HomeClient />
       </main>
 

@@ -27,36 +27,42 @@ export function HomeClient() {
 
         <div className={styles.heroInner}>
           <div className={styles.heroTop}>
-            <h1 className={styles.heroH1}>Même voyage. Meilleur plan.</h1>
+            <h1 className={styles.heroH1}>
+              Voyager mieux ne devrait pas coûter plus cher
+            </h1>
             <p className={styles.heroLead}>
-              Tu réserves. TravelTactik t’aide à optimiser budget, confort et
-              itinéraire — avec une sélection claire, actionnable, sans flou.
+              Tu réserves toi-même. Nous, on t&apos;ouvre l&apos;accès aux
+              réseaux, opportunités et itinéraires que les comparateurs ne
+              voient pas.
             </p>
           </div>
 
           <div className={styles.callCard} id="appel">
             <div className={styles.cardTopRow}>
-              <div className={styles.kicker}>Appel découverte gratuit</div>
+              <div className={styles.kicker}>Accès gratuit - 30 MIN</div>
               <div className={styles.phoneBadge} title="Appel découverte">
                 <PhoneIcon />
               </div>
             </div>
 
-            <h2 className={styles.h2}>On clarifie ton projet en 15 minutes</h2>
+            <h2 className={styles.h2}>
+              On te montre ce que les autres ne te montrent pas
+            </h2>
             <p className={styles.p}>
-              Destination, dates, budget, niveau (Éco / Confort / Premium),
-              contraintes : tu repars avec un cadrage net.
+              Destination, dates, budget, contraintes réelles. On analyse ton
+              projet et on met en avant les options les plus intelligentes pour
+              toi.
             </p>
 
             <div className={styles.actions}>
               <Link className={styles.primary} href="/appel-decouverte">
-                Réserver un créneau
+                Accèder à mon plan →
               </Link>
             </div>
 
             <div className={styles.micro}>
-              Confirmation + invitation agenda envoyées automatiquement après
-              réservation.
+              Aucun engagement. 100% gratuit. Sans carte bancaire. Confirmation
+              immédiate par email + invitation calendrier automatique.
             </div>
           </div>
         </div>

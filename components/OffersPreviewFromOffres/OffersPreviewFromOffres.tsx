@@ -52,16 +52,23 @@ export function OffersPreviewFromOffres() {
   return (
     <section className={styles.section} id="offres">
       <div className={styles.head}>
-        <div>
-          <h2 className={styles.h2}>Les offres du moment</h2>
+        <div className={styles.subdiv}>
+          <h2 className={styles.h2}>
+            Des voyages pensés intelligemment &#x2705;
+          </h2>
           <p className={styles.p}>
-            Planifiez avec nous votre prochain voyage à des prix imbattables !
-            Les prix indiqués comprennent le vol et l&apos;hébergement.
+            Chaque voyage présenté ici est le résultat d'une{" "}
+            <strong>analyse complète</strong> : optimisation des vols,
+            hébérgements, niveau de confort et coût réel.
+            <br />
+            <br />
+            Les prix indiqués incluent vol + hébergement, sans mauvaises
+            surprises.
           </p>
         </div>
 
         <Link className={styles.more} href="/offres">
-          Voir toutes les offres →
+          Explorer les plans disponibles →
         </Link>
       </div>
 

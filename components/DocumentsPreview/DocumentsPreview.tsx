@@ -7,10 +7,13 @@ export function DocumentsPreview() {
       <div className={styles.head}>
         <div>
           <div className={styles.kicker}>Documents & Carnets de voyage</div>
-          <h2 className={styles.h2}>Le livrable qui change tout</h2>
+          <h2 className={styles.h2}>
+            Ce que tu obtiens concrètement &#x1F4A1;
+          </h2>
           <p className={styles.p}>
-            Une synthèse claire, actionnable, et optimisée pour ton budget et
-            ton confort.
+            TravelTactik te fournit une séléction claire et des liens de
+            réservation. Tu restes{" "}
+            <strong>entièrement décisionnaire et tu réserves toi-même.</strong>
           </p>
         </div>
 
@@ -28,32 +31,40 @@ export function DocumentsPreview() {
 
           <div className={styles.cardTitle}>Conseil & organisation</div>
           <ul className={styles.list}>
-            <li>Vols optimisés (prix / horaires / confort selon ton niveau)</li>
-            <li>Hébergements avantageux et bien connectés</li>
-            <li>Logique de déplacements et cohérence géographique</li>
-            <li>Sélection d’adresses et bons plans utiles</li>
+            <li>
+              Vols optimisés intelligemment (prix / horaires / confort selon ton
+              besoin)
+            </li>
+            <li>Hébergements bien situés et cohérents avec tes besoins</li>
+            <li>Logique de déplacements fluide et réaliste</li>
+            <li>Sélection d’adresses utiles et bons plans pertinents</li>
           </ul>
         </article>
 
         <article className={styles.card}>
           <div className={styles.priceLine}>
             <div className={styles.price}>49€</div>
-            <div className={styles.unit}>option</div>
+            <div className={styles.unit}>en option</div>
           </div>
 
           <div className={styles.cardTitle}>Carnet de voyage</div>
           <ul className={styles.list}>
-            <li>Incontournables + pépites du moment</li>
-            <li>Bonnes adresses et “secrets” locaux</li>
-            <li>Bons plans premium (ex : hôtels, spas, happy hours)</li>
-            <li>Expériences : croisières, spots, quartiers, timing</li>
+            <li>Incontournables et pépites locales du moment</li>
+            <li>Bonnes adresses sélectionnées, loin des pièges touristiques</li>
+            <li>
+              Bons plans premium (Hôtels, Spas, Rooftops, Happy Hours,
+              Croisières Apéros)
+            </li>
+            <li>
+              Expériences et timing optimisé : quartiers, spots, moments clés
+            </li>
           </ul>
         </article>
       </div>
 
       <div className={styles.note}>
-        TravelTactik te donne une sélection claire et des liens de réservation.
-        Tu restes décisionnaire et tu réserves toi-même.
+        &#x1F4D3; Un guide personnalisé pour vivre le voyage au bon endroit, au
+        bon moment.
       </div>
     </section>
   );
