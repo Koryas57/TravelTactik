@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 import { signOut, useSession } from "next-auth/react";
 import styles from "./HeaderMenu.module.scss";
 import { GoogleIcon } from "../icons/GoogleIcon";
@@ -36,7 +37,7 @@ export function HeaderMenu({ openCheckout }: Props) {
     if (isHome) {
       return [
         { label: "Appel gratuit", href: "/#appel" },
-        { label: "Offres", href: "/#offres" },
+        { label: "Offres", href: "/offres" },
         { label: "Carnets", href: "/#documents" },
         { label: "FAQ", href: "/#faq" },
         { label: "TravelTactik", href: "/#traveltactik" },
@@ -112,8 +113,21 @@ export function HeaderMenu({ openCheckout }: Props) {
 
           <div className={styles.panel} ref={panelRef}>
             <div className={styles.top}>
-              <span className={styles.logoDot} aria-hidden="true" />
-              <div className={styles.panelTitle}>Travel Tactik</div>
+              <Link
+                href="/"
+                className={styles.brand}
+                aria-label="TravelTactik — Accueil"
+              >
+                <Image
+                  className={styles.brandLogoImage}
+                  src="/images/LogoTravel.png"
+                  alt="Logo TravelTactik"
+                  width={55}
+                  height={55}
+                />
+
+                <span className={styles.brandText}>TRAVEL TACTIK</span>
+              </Link>
               <button
                 type="button"
                 className={styles.close}

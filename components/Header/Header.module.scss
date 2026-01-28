@@ -18,9 +18,7 @@
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  font-weight: 800;
-  letter-spacing: 0.2px;
+  gap: 5px;
   text-decoration: none;
   white-space: nowrap;
 }
@@ -31,16 +29,23 @@
   border-radius: 10px;
 }
 
-.logoDot {
-  width: 12px;
-  height: 12px;
-  border-radius: 999px;
-  background: var(--tt-amber);
-  box-shadow: 0 0 0 6px rgba(255, 194, 51, 0.25);
+.brandLogoImage {
+  opacity: 0;
+  transform: translateX(-500px);
+  animation: ttLogoIn 3.2s cubic-bezier(0.2, 0.9, 0.2, 1) forwards;
 }
 
-.name {
-  color: var(--tt-text);
+/* Wordmark */
+.brandText {
+  color: var(--tt-logo);
+  font-family: var(--font-sora);
+  font-weight: 900;
+  font-size: 1.1rem;
+  letter-spacing: 0.6px;
+  /* animation texte: 2x la durée de l'image */
+  opacity: 0;
+  transform: translateY(10px);
+  animation: ttTextIn 5.2s cubic-bezier(0.2, 0.9, 0.2, 1) forwards;
 }
 
 .actions {
@@ -133,4 +138,43 @@
 
 .authBtn:hover {
   background: rgba(255, 255, 255, 0.85);
+}
+
+@keyframes ttLogoIn {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes ttTextIn {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brandLogo,
+  .brandText {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .brandText {
+    font-size: 0.95rem;
+  }
+  .row {
+    gap: 5px;
+  }
 }

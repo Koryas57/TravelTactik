@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import styles from "./Header.module.scss";
 import { HeaderMenu } from "./HeaderMenu";
 
@@ -24,8 +25,15 @@ export function Header({ onCtaClick, showCta = true, title }: Props) {
             className={styles.brand}
             aria-label="TravelTactik — Accueil"
           >
-            <span className={styles.logoDot} aria-hidden="true" />
-            <span className={styles.name}>TravelTactik</span>
+            <Image
+              className={styles.brandLogoImage}
+              src="/images/LogoTravel.png"
+              alt="Logo TravelTactik"
+              width={55}
+              height={55}
+            />
+
+            <span className={styles.brandText}>TRAVEL TACTIK</span>
           </Link>
 
           <div className={styles.actions}>
@@ -41,7 +49,7 @@ export function Header({ onCtaClick, showCta = true, title }: Props) {
               </button>
             ) : (
               <Link className={styles.back} href="/">
-                ← Retour au site
+                ← Accueil
               </Link>
             )}
 

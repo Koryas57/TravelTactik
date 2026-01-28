@@ -81,20 +81,42 @@
 .top {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  gap: 36px;
+  justify-content: center;
+  gap: 14px;
   padding-bottom: 10px;
   border-bottom: 1px solid var(--tt-border);
 }
 
-.logoDot {
-  width: 12px;
-  height: 12px;
-  border-radius: 999px;
-  background: var(--tt-amber);
-  box-shadow: 0 0 0 6px rgba(255, 194, 51, 0.25);
-  position: absolute;
-  left: 15vw;
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.brand:focus-visible {
+  outline: 2px solid rgba(0, 0, 0, 0.35);
+  outline-offset: 4px;
+  border-radius: 10px;
+}
+
+.brandLogoImage {
+  opacity: 0;
+  transform: translateX(-500px);
+  animation: ttLogoIn 2s cubic-bezier(0.2, 0.9, 0.2, 1) forwards;
+}
+
+.brandText {
+  color: var(--tt-logo);
+  font-family: var(--font-sora);
+  font-weight: 900;
+  font-size: 1.85rem;
+  letter-spacing: 0.6px;
+  /* animation texte: 2x la durée de l'image */
+  opacity: 0;
+  transform: translateY(10px);
+  animation: ttTextIn 4.2s cubic-bezier(0.2, 0.9, 0.2, 1) forwards;
 }
 
 .panelTitle {
@@ -206,4 +228,34 @@
 .close:focus-visible {
   outline: 2px solid rgba(0, 0, 0, 0.35);
   outline-offset: 3px;
+}
+
+@keyframes ttLogoIn {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes ttTextIn {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brandLogo,
+  .brandText {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
 }
