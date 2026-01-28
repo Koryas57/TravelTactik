@@ -14,7 +14,7 @@
     url("/images/hero.jpg");
   background-size: cover;
   background-position: center;
-  filter: saturate(1.05);
+  filter: saturate(1.05) brightness(1.2);
 }
 
 .heroInner {
