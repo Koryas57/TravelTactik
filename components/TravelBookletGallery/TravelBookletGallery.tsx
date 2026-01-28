@@ -17,12 +17,16 @@ type Props = {
   items: Booklet[];
   kicker?: string;
   title?: string;
+  moreHref?: string;
+  moreLabel?: string;
 };
 
 export function TravelBookletGallery({
   items,
   kicker = "Exemples de carnets",
   title = "Aperçu (clique pour feuilleter)",
+  moreHref,
+  moreLabel = "En savoir plus →",
 }: Props) {
   const [open, setOpen] = useState(false);
   const [bookletIndex, setBookletIndex] = useState(0);
@@ -132,6 +136,13 @@ export function TravelBookletGallery({
         ))}
       </div>
 
+      <div className={styles.headRow}>
+        {moreHref ? (
+          <a className={styles.more} href={moreHref}>
+            {moreLabel}
+          </a>
+        ) : null}
+      </div>
       {open && currentPage ? (
         <div
           className={styles.modal}

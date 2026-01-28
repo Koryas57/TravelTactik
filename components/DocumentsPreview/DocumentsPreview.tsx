@@ -136,6 +136,8 @@ export function DocumentsPreview() {
         items={[...BOOKLETS]}
         kicker="Exemples de carnets de voyage"
         title="Visualise un carnet (comme tu le recevras) &#x1F447;"
+        moreHref="/carnets-de-voyage"
+        moreLabel="En savoir plus →"
       />
     </section>
   );
