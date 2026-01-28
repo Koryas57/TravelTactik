@@ -63,33 +63,44 @@
   box-shadow: var(--tt-shadow);
 }
 
-/* Icônes “tendance et colorées” en pur CSS (tu peux remplacer par des SVG plus tard) */
-.ig,
-.tt,
-.yt,
-.fb {
-  width: 18px;
-  height: 18px;
-  border-radius: 6px;
-  display: block;
-}
-
-.ig {
-  background: linear-gradient(135deg, #f58529, #dd2a7b, #8134af, #515bd4);
-}
-.tt {
-  background: linear-gradient(135deg, #00f2ea, #000, #ff0050);
-}
-.yt {
-  background: linear-gradient(135deg, #ff0000, #b30000);
-}
-.fb {
-  background: linear-gradient(135deg, #1877f2, #0b4aa2);
-}
-
 .socialHint {
   margin-top: 10px;
   font-size: 12px;
   color: var(--tt-muted);
   font-weight: 650;
+}
+
+.svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+  transition:
+    transform 160ms ease,
+    filter 160ms ease;
+}
+
+/* Couleurs brand via filtres (works well with monochrome SVG fill) */
+.ig {
+  filter: drop-shadow(0 6px 14px rgba(221, 42, 123, 0.18));
+  fill: #dd2a7b;
+}
+
+.tt {
+  filter: drop-shadow(0 6px 14px rgba(255, 0, 80, 0.12));
+  fill: #111;
+}
+
+.yt {
+  filter: drop-shadow(0 6px 14px rgba(255, 0, 0, 0.18));
+  fill: #ff0000;
+}
+
+.fb {
+  filter: drop-shadow(0 6px 14px rgba(24, 119, 242, 0.18));
+  fill: #1877f2;
+}
+
+.icon:hover .svg {
+  transform: translateY(-1px);
+  filter: brightness(1.05) drop-shadow(0 10px 18px rgba(2, 6, 23, 0.12));
 }

@@ -31,9 +31,8 @@ export function HomeClient() {
               Voyager mieux ne devrait pas coûter plus cher
             </h1>
             <p className={styles.heroLead}>
-              Tu réserves toi-même. Nous, on t&apos;ouvre l&apos;accès aux
-              réseaux, opportunités et itinéraires que les comparateurs ne
-              voient pas.
+              Tu réserves toi-même → On t&apos;ouvre l&apos;accès aux réseaux,
+              opportunités et itinéraires que les comparateurs ne voient pas.
             </p>
           </div>
 

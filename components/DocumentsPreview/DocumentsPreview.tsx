@@ -18,7 +18,7 @@ export function DocumentsPreview() {
         </div>
 
         <Link className={styles.more} href="/carnets-de-voyage">
-          Voir plus →
+          En savoir plus →
         </Link>
       </div>
 

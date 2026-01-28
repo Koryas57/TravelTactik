@@ -60,9 +60,10 @@ export function OffersPreviewFromOffres() {
             Chaque voyage présenté ici est le résultat d'une{" "}
             <strong>analyse complète</strong> : optimisation des vols,
             hébérgements, niveau de confort et coût réel.
-            <br />
-            <br />
-            Les prix indiqués incluent vol + hébergement, sans mauvaises
+          </p>
+
+          <p className={styles.p}>
+            Les prix indiqués incluent vols + hébergement, sans mauvaises
             surprises.
           </p>
         </div>
