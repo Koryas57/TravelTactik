@@ -51,7 +51,6 @@
 .actions {
   display: flex;
   align-items: center;
-  gap: 12px;
 }
 
 .cta {
@@ -176,5 +175,18 @@
   }
   .row {
     gap: 5px;
+  }
+}
+
+@media (max-width: 373px) {
+  .brand {
+    white-space: wrap;
+  }
+  .brandText {
+    width: min-content;
+  }
+  .row {
+    justify-content: start;
+    gap: 30px;
   }
 }

@@ -29,7 +29,7 @@ export function Header({ onCtaClick, showCta = true, title }: Props) {
               className={styles.brandLogoImage}
               src="/images/LogoTravel.png"
               alt="Logo TravelTactik"
-              width={55}
+              width={44}
               height={55}
             />
 
