@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import styles from "./Offers.module.scss";
 
 import { OfferCard } from "../../components/Offers/OfferCard";
@@ -181,7 +181,6 @@ export function OffersClient() {
     setError(null);
 
     try {
-      // OFFRES
       const res = await fetch(`/api/offers?${qs}`, {
         cache: "no-store",
         redirect: "follow",
@@ -202,13 +201,11 @@ export function OffersClient() {
 
       setOffers(data.rows || []);
 
-      // FAVORIS (non connecté => ignore, et surtout ne pas parser du HTML)
       const favRes = await fetch("/api/app/favorites", {
         cache: "no-store",
-        redirect: "manual", // important: évite que fetch suive une redirection vers du HTML
+        redirect: "manual",
       });
 
-      // Si redirect (302/307/308) ou 401 => pas connecté
       if (
         favRes.status === 401 ||
         favRes.status === 302 ||
@@ -254,7 +251,9 @@ export function OffersClient() {
         res.status === 307 ||
         res.status === 308
       ) {
-        window.location.href = `/login?callbackUrl=${encodeURIComponent(currentUrl)}`;
+        window.location.href = `/login?callbackUrl=${encodeURIComponent(
+          currentUrl,
+        )}`;
         return;
       }
 
@@ -264,9 +263,10 @@ export function OffersClient() {
         error?: string;
       }>(res);
 
-      // Si ce n'est pas du JSON, c’est quasi sûr que c’est une page HTML de login.
       if (!data) {
-        window.location.href = `/login?callbackUrl=${encodeURIComponent(currentUrl)}`;
+        window.location.href = `/login?callbackUrl=${encodeURIComponent(
+          currentUrl,
+        )}`;
         return;
       }
 
@@ -291,25 +291,55 @@ export function OffersClient() {
     setTier((prev) => (prev === next ? "" : next));
   }
 
+  const resetAll = () => {
+    setQ("");
+    setFrom("");
+    setTo("");
+    setCategory("");
+    setTier("");
+    setMaxPrice("");
+    setSort("recent");
+  };
+
+  const chipsLabel =
+    category || tier
+      ? `${category ? `Catégorie: ${category}` : ""}${category && tier ? " • " : ""}${
+          tier
+            ? `Gamme: ${tier === "eco" ? "Éco" : tier === "comfort" ? "Confort" : "Premium"}`
+            : ""
+        }`
+      : "Aucun filtre rapide sélectionné";
+
   return (
     <div className={styles.wrap}>
       <div className={styles.header}>
-        <h1 className={styles.h1}>Offres premium</h1>
+        <div className={styles.headerTop}>
+          <h1 className={styles.h1}>Offres sélectionnées</h1>
+
+          <div className={styles.stats}>
+            <span className={styles.statPill}>
+              {loading ? "…" : offers.length} offre
+              {offers.length > 1 ? "s" : ""}
+            </span>
+            <span className={styles.statNote}>{chipsLabel}</span>
+          </div>
+        </div>
+
         <p className={styles.sub}>
-          Recherche, filtres, et favoris. Les cartes sont administrées dans le
-          back-office.
+          Filtre nos meilleurs offres par départ, destination, mots-clés, puis
+          sauvegarde tes favoris.
         </p>
       </div>
 
-      {/* Toolbar / Filters */}
       <div className={styles.toolbar}>
-        <div className={styles.searchRow}>
+        {/* Inputs : 2 lignes premium */}
+        <div className={styles.searchGrid}>
           <label className={styles.field}>
             <span>Départ</span>
             <input
               value={from}
               onChange={(e) => setFrom(e.target.value)}
-              placeholder="Marseille, Paris, LYS…"
+              placeholder="Marseille, Paris, CDG…"
             />
           </label>
 
@@ -322,12 +352,12 @@ export function OffersClient() {
             />
           </label>
 
-          <label className={styles.field}>
-            <span>Recherche</span>
+          <label className={styles.fieldWide}>
+            <span>Mots-clés</span>
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="mots-clés (ski, week-end, Tokyo…)"
+              placeholder="ski, week-end, Tokyo, rooftop, nature…"
             />
           </label>
 
@@ -347,66 +377,75 @@ export function OffersClient() {
               value={sort}
               onChange={(e) => setSort(e.target.value as Sort)}
             >
-              <option value="recent">Récent</option>
-              <option value="price_asc">Prix ↑</option>
-              <option value="price_desc">Prix ↓</option>
+              <option value="recent">Plus récent</option>
+              <option value="price_asc">Prix croissant</option>
+              <option value="price_desc">Prix décroissant</option>
             </select>
           </label>
-
-          <button
-            type="button"
-            className={styles.reset}
-            onClick={() => {
-              setQ("");
-              setFrom("");
-              setTo("");
-              setCategory("");
-              setTier("");
-              setMaxPrice("");
-              setSort("recent");
-            }}
-          >
-            Reset
-          </button>
         </div>
 
-        {/* Chips */}
+        <div className={styles.divider} />
+
+        <div className={styles.toolbarTitle}>Filtres rapides</div>
+
         <div className={styles.chips}>
           <div className={styles.chipsGroup}>
             <div className={styles.chipsTitle}>Catégories</div>
-            <div className={styles.chipsRow}>
-              {CATEGORIES.map((c) => (
+
+            <div className={styles.chipsRail}>
+              <div
+                className={styles.chipsRow}
+                role="list"
+                aria-label="Catégories"
+              >
                 <button
-                  key={c}
                   type="button"
-                  className={`${styles.chip} ${category === c ? styles.chipOn : ""}`}
-                  onClick={() => setQuickCategory(c)}
-                  aria-pressed={category === c}
+                  className={`${styles.chip} ${category === "" ? styles.chipOn : ""}`}
+                  onClick={() => setCategory("")}
+                  aria-pressed={category === ""}
+                  role="listitem"
                 >
-                  {c}
+                  Toutes
                 </button>
-              ))}
+
+                {CATEGORIES.map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    className={`${styles.chip} ${category === c ? styles.chipOn : ""}`}
+                    onClick={() => setQuickCategory(c)}
+                    aria-pressed={category === c}
+                    role="listitem"
+                  >
+                    {c}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
           <div className={styles.chipsGroup}>
             <div className={styles.chipsTitle}>Gamme</div>
-            <div className={styles.chipsRow}>
-              {(["eco", "comfort", "premium"] as const).map((t) => (
-                <button
-                  key={t}
-                  type="button"
-                  className={`${styles.chip} ${tier === t ? styles.chipOn : ""}`}
-                  onClick={() => setQuickTier(t)}
-                  aria-pressed={tier === t}
-                >
-                  {t === "eco"
-                    ? "Eco"
-                    : t === "comfort"
-                      ? "Confort"
-                      : "Premium"}
-                </button>
-              ))}
+
+            <div className={styles.chipsRail}>
+              <div className={styles.chipsRow} role="list" aria-label="Gamme">
+                {(["eco", "comfort", "premium"] as const).map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    className={`${styles.chip} ${tier === t ? styles.chipOn : ""}`}
+                    onClick={() => setQuickTier(t)}
+                    aria-pressed={tier === t}
+                    role="listitem"
+                  >
+                    {t === "eco"
+                      ? "Éco"
+                      : t === "comfort"
+                        ? "Confort"
+                        : "Premium"}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -417,7 +456,10 @@ export function OffersClient() {
 
       <div className={styles.grid}>
         {!loading && !offers.length ? (
-          <div className={styles.empty}>Aucun résultat avec ces filtres.</div>
+          <div className={styles.empty}>
+            Aucune offre ne correspond à ces filtres. Essaie d’élargir la
+            recherche.
+          </div>
         ) : null}
 
         {offers.map((o) => {

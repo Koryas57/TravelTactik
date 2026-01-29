@@ -67,7 +67,7 @@
 .panel {
   position: relative;
   margin-left: auto;
-  height: 100vh;
+  height: 100dvh;
   width: min(420px, 92vw);
   background: rgba(246, 248, 252, 0.98);
   backdrop-filter: blur(10px);
@@ -77,7 +77,7 @@
   flex-direction: column;
   box-shadow: -18px 0 40px #00000061;
   overflow-y: auto;
-  scroll-behavior: smooth;
+  overscroll-behavior: contain;
 }
 
 .top {

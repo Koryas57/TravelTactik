@@ -15,6 +15,8 @@ async function safeJson<T>(res: Response): Promise<T | null> {
   }
 }
 
+// A preview of recent offers from the /offres page on the landing page.
+
 export function OffersPreviewFromOffres() {
   const [offers, setOffers] = useState<Offer[]>([]);
   const [loading, setLoading] = useState(true);

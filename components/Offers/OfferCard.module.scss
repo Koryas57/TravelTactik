@@ -3,6 +3,9 @@
   border-radius: 18px;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.65);
+
+  /* CRUCIAL: autorise la grid à shrink sur mobile */
+  min-width: 0;
 }
 
 .media {
@@ -85,22 +88,54 @@
   padding: 12px;
   display: grid;
   gap: 8px;
+
+  /* évite que les enfants forcent la largeur */
+  min-width: 0;
 }
 
+/* --- TITRE + DESTINATION --- */
 .titleRow {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 10px;
+
+  /* CRUCIAL: autorise le shrink + wrap */
+  min-width: 0;
 }
 
 .title {
   font-weight: 900;
+
+  /* CRUCIAL: permet au titre de se couper dans un flex row */
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .destination {
   color: var(--tt-muted);
   font-weight: 700;
+
+  /* évite que la destination impose une largeur énorme */
+  min-width: 0;
+  text-align: right;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Mobile: on stack (sinon ça force une largeur min-content) */
+@media (max-width: 520px) {
+  .titleRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .destination {
+    text-align: left;
+    opacity: 0.9;
+  }
 }
 
 .meta {
@@ -109,22 +144,29 @@
   color: var(--tt-muted);
   font-weight: 600;
   font-size: 14px;
+
+  min-width: 0;
 }
 
 .price {
   color: inherit;
   font-weight: 900;
+  overflow-wrap: anywhere;
 }
 
 .secondary {
   color: var(--tt-muted);
   font-weight: 650;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .tags {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+
+  min-width: 0;
 }
 
 .tag {
@@ -134,4 +176,7 @@
   border-radius: 999px;
   border: 1px solid var(--tt-border);
   background: rgba(255, 255, 255, 0.65);
+
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }

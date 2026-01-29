@@ -6,6 +6,7 @@ import type { NextRequest } from "next/server";
 import { getSql } from "../../../lib/db";
 
 type Tier = "eco" | "comfort" | "premium";
+type Sort = "recent" | "price_asc" | "price_desc";
 
 const ALLOWED_CATEGORIES = new Set([
   "Aventure",
@@ -27,15 +28,21 @@ function isTier(v: string | null): v is Tier {
   return v === "eco" || v === "comfort" || v === "premium";
 }
 
+function isSort(v: string | null): v is Sort {
+  return v === "recent" || v === "price_asc" || v === "price_desc";
+}
+
 function cleanLike(s: string) {
-  // évite les %/_ non voulus
+  // évite les %/_ non voulus dans un ILIKE
   return s.replaceAll("%", "\\%").replaceAll("_", "\\_");
 }
 
-type Sort = "recent" | "price_asc" | "price_desc";
-
-function isSort(v: string | null): v is Sort {
-  return v === "recent" || v === "price_asc" || v === "price_desc";
+function splitTokens(input: string) {
+  return input
+    .trim()
+    .split(/\s+/)
+    .map((t) => t.trim())
+    .filter(Boolean);
 }
 
 export async function GET(req: NextRequest) {
@@ -44,9 +51,9 @@ export async function GET(req: NextRequest) {
     const sp = req.nextUrl.searchParams;
 
     const category = sp.get("category");
-    const from = sp.get("from"); // ville départ
+    const from = sp.get("from"); // ville départ (texte)
     const to = sp.get("to"); // destination (texte)
-    const q = sp.get("q");
+    const q = sp.get("q"); // mots-clés
     const tier = sp.get("tier");
     const maxPriceRaw = sp.get("maxPrice");
     const limitRaw = sp.get("limit");
@@ -85,21 +92,67 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Patterns (ILIKE)
-    const qLike = q ? `%${cleanLike(q.trim())}%` : null;
-    const fromLike = from ? `%${cleanLike(from.trim())}%` : null;
-    const toLike = to ? `%${cleanLike(to.trim())}%` : null;
-
-    // Tri
-    // recent: updated_at desc
-    // price_asc: price_from_eur asc nulls last, updated_at desc
-    // price_desc: price_from_eur desc nulls last, updated_at desc
+    // ORDER BY
     const orderSql =
       sort === "price_asc"
         ? sql`o.price_from_eur asc nulls last, o.updated_at desc`
         : sort === "price_desc"
           ? sql`o.price_from_eur desc nulls last, o.updated_at desc`
           : sql`o.updated_at desc`;
+
+    // WHERE (construction propre)
+    let where = sql`o.is_published = true`;
+
+    // category
+    if (category) {
+      where = sql`${where} and o.category = ${category}`;
+    }
+
+    // tier
+    if (tier) {
+      where = sql`${where} and o.tier = ${tier}`;
+    }
+
+    // maxPrice (null = ignore)
+    if (maxPrice !== null) {
+      where = sql`${where} and coalesce(o.price_from_eur, 2147483647) <= ${maxPrice}`;
+    }
+
+    // from (match departure city/airport)
+    if (from && from.trim()) {
+      const fromLike = `%${cleanLike(from.trim())}%`;
+      where = sql`${where} and (
+        coalesce(o.departure_city,'') ilike ${fromLike} escape '\\'
+        or coalesce(o.departure_airport,'') ilike ${fromLike} escape '\\'
+      )`;
+    }
+
+    // to (destination) -> NOW matches destination OR title OR slug
+    // Multi-mots: chaque token doit matcher au moins une des colonnes.
+    if (to && to.trim()) {
+      const tokens = splitTokens(to);
+      for (const token of tokens) {
+        const like = `%${cleanLike(token)}%`;
+        where = sql`${where} and (
+          coalesce(o.destination,'') ilike ${like} escape '\\'
+          or coalesce(o.title,'') ilike ${like} escape '\\'
+          or coalesce(o.slug,'') ilike ${like} escape '\\'
+        )`;
+      }
+    }
+
+    // q (mots-clés) : on garde ton comportement + ajout slug
+    if (q && q.trim()) {
+      const qLike = `%${cleanLike(q.trim())}%`;
+      where = sql`${where} and (
+        coalesce(o.title,'') ilike ${qLike} escape '\\'
+        or coalesce(o.slug,'') ilike ${qLike} escape '\\'
+        or coalesce(o.destination,'') ilike ${qLike} escape '\\'
+        or coalesce(o.departure_city,'') ilike ${qLike} escape '\\'
+        or coalesce(o.departure_airport,'') ilike ${qLike} escape '\\'
+        or array_to_string(o.tags, ' ') ilike ${qLike} escape '\\'
+      )`;
+    }
 
     const rows = await sql`
       select
@@ -120,35 +173,7 @@ export async function GET(req: NextRequest) {
         o.created_at,
         o.updated_at
       from offers o
-      where
-        o.is_published = true
-
-        and (${category}::text is null or o.category = ${category})
-
-        and (
-          ${fromLike}::text is null
-          or coalesce(o.departure_city,'') ilike ${fromLike} escape '\\'
-          or coalesce(o.departure_airport,'') ilike ${fromLike} escape '\\'
-        )
-
-        and (
-          ${toLike}::text is null
-          or o.destination ilike ${toLike} escape '\\'
-        )
-
-        and (
-          ${qLike}::text is null
-          or o.title ilike ${qLike} escape '\\'
-          or o.destination ilike ${qLike} escape '\\'
-          or coalesce(o.departure_city,'') ilike ${qLike} escape '\\'
-          or coalesce(o.departure_airport,'') ilike ${qLike} escape '\\'
-          or array_to_string(o.tags, ' ') ilike ${qLike} escape '\\'
-        )
-
-        and (${tier}::text is null or o.tier = ${tier})
-
-        and (${maxPrice}::int is null or coalesce(o.price_from_eur, 2147483647) <= ${maxPrice})
-
+      where ${where}
       order by ${orderSql}
       limit ${limit};
     `;
@@ -157,10 +182,7 @@ export async function GET(req: NextRequest) {
       {
         ok: true,
         rows,
-        meta: {
-          sort,
-          limit,
-        },
+        meta: { sort, limit },
       },
       { status: 200 },
     );
