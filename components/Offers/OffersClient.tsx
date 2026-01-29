@@ -314,7 +314,7 @@ export function OffersClient() {
     <div className={styles.wrap}>
       <div className={styles.header}>
         <div className={styles.headerTop}>
-          <h1 className={styles.h1}>Offres sélectionnées</h1>
+          <h1 className={styles.h1}>Nos Offres Sélectionnées ⭐</h1>
 
           <div className={styles.stats}>
             <span className={styles.statPill}>
