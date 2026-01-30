@@ -250,7 +250,7 @@
 
 .createCard {
   border: 1px solid var(--tt-border);
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(0, 0, 0, 0.38);
   border-radius: 18px;
   padding: 16px;
   margin: 14px 0 18px;
@@ -365,40 +365,26 @@
 /* grid of editors */
 .grid {
   display: grid;
+  justify-content: center;
   gap: 14px;
-  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
   margin-top: 14px;
 }
 
-@media (min-width: 980px) {
-  .grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.slug {
+  font-weight: 800;
+  font-size: 20px;
+  text-transform: uppercase;
+  color: black;
+  margin-top: 6px;
 }
-
-@media (min-width: 1280px) {
-  .grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
 /* offer editor card */
 .offerCard {
-  border: 1px solid var(--tt-border);
+  border: 3px solid var(--tt-text);
   border-radius: 18px;
   overflow: hidden;
-  background:
-    radial-gradient(
-      900px 260px at 20% 0%,
-      rgba(59, 130, 246, 0.1),
-      transparent 55%
-    ),
-    radial-gradient(
-      900px 260px at 85% 10%,
-      rgba(245, 158, 11, 0.1),
-      transparent 60%
-    ),
-    rgba(255, 255, 255, 0.55);
+  background: #0000006e;
+  width: 91vw;
 }
 
 .offerTop {

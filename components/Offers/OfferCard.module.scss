@@ -124,10 +124,8 @@
   word-break: break-word;
 }
 
-/* Mobile: on stack (sinon ça force une largeur min-content) */
 @media (max-width: 520px) {
   .titleRow {
-    flex-direction: column;
     align-items: flex-start;
     gap: 4px;
   }
