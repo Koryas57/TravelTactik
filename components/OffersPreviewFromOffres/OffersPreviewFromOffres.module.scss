@@ -4,7 +4,8 @@
 
 .head {
   display: flex;
-  align-items: flex-end;
+  flex-direction: column;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 15px;
   margin-bottom: 18px;
@@ -34,6 +35,7 @@
   border-radius: 999px;
   padding: 10px 14px;
   white-space: nowrap;
+  align-self: end;
 }
 
 .muted {
