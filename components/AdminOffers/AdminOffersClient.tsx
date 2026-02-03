@@ -98,11 +98,25 @@ export function AdminOffersClient() {
     destination: string;
     category?: string | null;
     tier?: string | null;
+    accommodationType?: string | null;
+    transportType?: string | null;
+    activityExamples?: string | null;
   }) {
+    const { accommodationType, transportType, activityExamples, ...payload } =
+      input;
     const res = await fetch("/api/admin/offers", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(input),
+      body: JSON.stringify({
+        ...payload,
+        meta: {
+          ...(accommodationType
+            ? { accommodation_type: accommodationType }
+            : {}),
+          ...(transportType ? { transport_type: transportType } : {}),
+          ...(activityExamples ? { activity_examples: activityExamples } : {}),
+        },
+      }),
     });
     const data = (await res.json()) as {
       ok: boolean;
@@ -239,12 +253,18 @@ function CreateOffer({
     destination: string;
     category?: string | null;
     tier?: string | null;
+    accommodationType?: string | null;
+    transportType?: string | null;
+    activityExamples?: string | null;
   }) => Promise<void>;
 }) {
   const [title, setTitle] = useState("");
   const [destination, setDestination] = useState("");
   const [category, setCategory] = useState("");
   const [tier, setTier] = useState("");
+  const [accommodationType, setAccommodationType] = useState("");
+  const [transportType, setTransportType] = useState("");
+  const [activityExamples, setActivityExamples] = useState("");
   const [saving, setSaving] = useState(false);
 
   async function submit() {
@@ -256,11 +276,17 @@ function CreateOffer({
         destination: destination.trim(),
         category: category ? category : null,
         tier: tier ? tier : null,
+        accommodationType: accommodationType.trim() || null,
+        transportType: transportType.trim() || null,
+        activityExamples: activityExamples.trim() || null,
       });
       setTitle("");
       setDestination("");
       setCategory("");
       setTier("");
+      setAccommodationType("");
+      setTransportType("");
+      setActivityExamples("");
     } finally {
       setSaving(false);
     }
@@ -328,6 +354,34 @@ function CreateOffer({
             <option value="premium">Premium</option>
           </select>
         </label>
+
+        <label className={styles.field}>
+          <span>Type d&apos;hébergement</span>
+          <input
+            value={accommodationType}
+            onChange={(e) => setAccommodationType(e.target.value)}
+            placeholder="ex: Boutique-hôtel, villa, lodge…"
+          />
+        </label>
+
+        <label className={styles.fieldWide}>
+          <span>Type de transport</span>
+          <input
+            value={transportType}
+            onChange={(e) => setTransportType(e.target.value)}
+            placeholder="ex: Vol direct, TGV, ferry…"
+          />
+        </label>
+
+        <label className={styles.fieldWide}>
+          <span>Exemples d&apos;activités</span>
+          <textarea
+            value={activityExamples}
+            onChange={(e) => setActivityExamples(e.target.value)}
+            placeholder="ex: randonnée, visite guidée, spa…"
+            rows={3}
+          />
+        </label>
       </div>
     </section>
   );
@@ -359,6 +413,15 @@ function OfferEditor({
   const [depCity, setDepCity] = useState(offer.departure_city || "");
   const [depAirport, setDepAirport] = useState(offer.departure_airport || "");
   const [published, setPublished] = useState<boolean>(offer.is_published);
+  const [accommodationType, setAccommodationType] = useState(
+    offer.meta?.accommodation_type || "",
+  );
+  const [transportType, setTransportType] = useState(
+    offer.meta?.transport_type || "",
+  );
+  const [activityExamples, setActivityExamples] = useState(
+    offer.meta?.activity_examples || "",
+  );
 
   async function save() {
     setSaving(true);
@@ -384,6 +447,12 @@ function OfferEditor({
         departure_city: depCity.trim() || null,
         departure_airport: depAirport.trim() || null,
         is_published: published,
+        meta: {
+          ...(offer.meta && typeof offer.meta === "object" ? offer.meta : {}),
+          accommodation_type: accommodationType.trim() || null,
+          transport_type: transportType.trim() || null,
+          activity_examples: activityExamples.trim() || null,
+        },
       });
     } finally {
       setSaving(false);
@@ -459,6 +528,34 @@ function OfferEditor({
               value={imageUrl}
               onChange={(e) => setImageUrl(e.target.value)}
               placeholder="https://…"
+            />
+          </label>
+
+          <label className={styles.fieldWide}>
+            <span>Type d&apos;hébergement</span>
+            <input
+              value={accommodationType}
+              onChange={(e) => setAccommodationType(e.target.value)}
+              placeholder="ex: Boutique-hôtel, villa, lodge…"
+            />
+          </label>
+
+          <label className={styles.fieldWide}>
+            <span>Type de transport</span>
+            <input
+              value={transportType}
+              onChange={(e) => setTransportType(e.target.value)}
+              placeholder="ex: Vol direct, TGV, ferry…"
+            />
+          </label>
+
+          <label className={styles.fieldWide}>
+            <span>Exemples d&apos;activités</span>
+            <textarea
+              value={activityExamples}
+              onChange={(e) => setActivityExamples(e.target.value)}
+              placeholder="ex: randonnée, visite guidée, spa…"
+              rows={3}
             />
           </label>
         </div>
