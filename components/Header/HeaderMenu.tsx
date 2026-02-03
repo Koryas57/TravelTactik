@@ -36,7 +36,7 @@ export function HeaderMenu({ openCheckout }: Props) {
   const navItems: NavItem[] = useMemo(() => {
     if (isHome) {
       return [
-        { label: "Appel gratuit", href: "/#appel" },
+        { label: "Appel gratuit", href: "/appel-decouverte" },
         { label: "Offres", href: "/offres" },
         { label: "Carnets", href: "/#documents" },
         { label: "FAQ", href: "/#faq" },

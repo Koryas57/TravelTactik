@@ -4,10 +4,12 @@
   background: var(--tt-card);
   box-shadow: var(--tt-shadow);
   overflow: hidden;
+  margin: 0 auto;
 }
 
 .embed {
-  min-width: 320px;
+  min-width: 300px;
+  margin-left: 10px;
 }
 
 .host {

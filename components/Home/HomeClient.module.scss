@@ -10,7 +10,7 @@
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(180deg, rgba(2, 6, 23, 0.62), rgba(2, 6, 23, 0.18)),
+    linear-gradient(180deg, rgba(2, 6, 23, 0.42), rgba(2, 6, 23, 0.18)),
     url("/images/hero3.jpg");
   background-size: cover;
   background-position: center;
@@ -70,7 +70,7 @@
   max-width: 760px;
   border: 0px solid rgba(255, 255, 255, 0.18);
   border-radius: var(--tt-radius-lg);
-  background: linear-gradient(160deg, #ffffff, #ffffff78);
+  background: linear-gradient(160deg, #ffffff, #ffffff30);
   backdrop-filter: blur(18px);
   box-shadow: var(--tt-shadow);
   padding: 16px;

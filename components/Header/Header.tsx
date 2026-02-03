@@ -14,7 +14,7 @@ type Props = {
 };
 
 export function Header({ onCtaClick, showCta = true, title }: Props) {
-  const ctaLabel = title ?? "Obtenir mon plan";
+  const ctaLabel = title ?? "Appel gratuit";
 
   return (
     <header className={styles.header}>
