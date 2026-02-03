@@ -55,7 +55,7 @@ export function OfferCard({
   const persons = o.persons ? `${o.persons} pers.` : null;
   const depart = o.departure_city || o.departure_airport || null;
 
-  const secondary = [depart ? `Départ: ${depart}` : null, duration, persons]
+  const secondary = [depart ? `Départ : ${depart}` : null, duration, persons]
     .filter(Boolean)
     .join(" · ");
 

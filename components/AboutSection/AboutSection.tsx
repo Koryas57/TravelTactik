@@ -35,8 +35,8 @@ export function AboutSection() {
           Voyager coûte souvent cher pour une raison simple : on réserve vite,
           sans arbitrage, et on paye des erreurs. TravelTactik construit un plan
           cohérent (temps + budget + confort) grâce à une méthode, des
-          alternatives et un réseau terrain — pour obtenir de meilleures
-          options, sans y passer des heures.
+          alternatives et un réseau terrain pour obtenir de meilleures options,
+          sans que vous n'ayez à y passer des heures.
         </p>
 
         <div className={styles.notice}>

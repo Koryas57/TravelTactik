@@ -176,20 +176,10 @@
 
 .chipsRail::before {
   left: 0;
-  background: linear-gradient(
-    90deg,
-    rgba(245, 247, 255, 1),
-    rgba(245, 247, 255, 0)
-  );
 }
 
 .chipsRail::after {
   right: 0;
-  background: linear-gradient(
-    270deg,
-    rgba(245, 247, 255, 1),
-    rgba(245, 247, 255, 0)
-  );
 }
 
 /* Row: mobile = horizontal scroll */
@@ -232,7 +222,7 @@
   border-radius: 999px;
   padding: 8px 12px;
   font-size: 12px;
-  font-weight: 900;
+  font-weight: 800;
   cursor: pointer;
   line-height: 1;
   user-select: none;
