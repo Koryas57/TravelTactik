@@ -74,7 +74,6 @@
 }
 
 .divider {
-  width: 81vw;
   height: 1px;
   background: rgba(0, 0, 0, 0.06);
 }
@@ -147,7 +146,6 @@
 .chipsGroup {
   display: grid;
   gap: 8px;
-  width: 81vw;
 }
 
 .chipsTitle {
@@ -160,7 +158,6 @@
 /* Rail = scroll container with gentle edge fade on mobile */
 .chipsRail {
   position: relative;
-  width: 81vw;
 }
 
 .chipsRail::before,
