@@ -65,8 +65,11 @@ export function OffersPreviewFromOffres() {
           </p>
 
           <p className={styles.p}>
-            Les prix indiqués incluent vols + hébergement, sans mauvaises
-            surprises.
+            <strong>
+              Les prix affichés correspondent à une estimation au moment de la
+              recherche (vol + hébergement). Les disponibilités et tarifs
+              peuvent évoluer.
+            </strong>
           </p>
         </div>
 

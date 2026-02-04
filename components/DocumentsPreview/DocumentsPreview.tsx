@@ -49,7 +49,7 @@ const BOOKLETS = [
     ],
   },
   {
-    id: "Barcelone",
+    id: "barcelone",
     title: "Barcelone",
     subtitle: "Exemple pour City-trip",
     tag: "Barcelone",
@@ -71,14 +71,16 @@ export function DocumentsPreview() {
     <section className={styles.section} id="documents">
       <div className={styles.head}>
         <div>
-          <div className={styles.kicker}>Documents & Carnets de voyage</div>
-          <h2 className={styles.h2}>
-            Ce que tu obtiens concrètement &#x1F4A1;
-          </h2>
+          <div className={styles.kicker}>Documents & carnets de voyage</div>
+          <h2 className={styles.h2}>Ce que tu obtiens concrètement 💡</h2>
           <p className={styles.p}>
-            TravelTactik te fournit une séléction claire et des liens de
-            réservation. Tu restes{" "}
-            <strong>entièrement décisionnaire et tu réserves toi-même.</strong>
+            Travel Tactik te fournit une sélection claire et des liens de
+            réservation.
+            <strong>
+              {" "}
+              Tu restes entièrement décisionnaire et tu réserves toi-même{" "}
+            </strong>
+            sur les sites officiels.
           </p>
         </div>
 
@@ -97,12 +99,15 @@ export function DocumentsPreview() {
           <div className={styles.cardTitle}>Conseil & organisation</div>
           <ul className={styles.list}>
             <li>
-              Vols optimisés intelligemment (prix / horaires / confort selon ton
-              besoin)
+              Vols optimisés (prix / horaires / fatigue) selon ton besoin Éco /
+              Confort / Premium
             </li>
-            <li>Hébergements bien situés et cohérents avec tes besoins</li>
-            <li>Logique de déplacements fluide et réaliste</li>
-            <li>Sélection d’adresses utiles et bons plans pertinents</li>
+            <li>Hébergements bien situés et cohérents avec tes priorités</li>
+            <li>
+              Logique de déplacements réaliste (temps sur place, distances,
+              enchaînements)
+            </li>
+            <li>Options + alternatives : tu choisis, tu arbitres</li>
           </ul>
         </article>
 
@@ -114,28 +119,29 @@ export function DocumentsPreview() {
 
           <div className={styles.cardTitle}>Carnet de voyage</div>
           <ul className={styles.list}>
-            <li>Incontournables et pépites locales du moment</li>
-            <li>Bonnes adresses sélectionnées, loin des pièges touristiques</li>
+            <li>Itinéraire jour par jour (rythme + timing recommandé)</li>
+            <li>Incontournables + pépites locales (selon la saison)</li>
             <li>
-              Bons plans premium (Hôtels, Spas, Rooftops, Happy Hours,
-              Croisières Apéros)
+              Restos, quartiers, spots, expériences : sélection utile, pas du
+              remplissage
             </li>
             <li>
-              Expériences et timing optimisé : quartiers, spots, moments clés
+              Conseils pratiques (logistique, zones à privilégier, erreurs à
+              éviter)
             </li>
           </ul>
         </article>
       </div>
 
       <div className={styles.note}>
-        &#x1F4D3; Un guide personnalisé pour vivre le voyage au bon endroit, au
-        bon moment.
+        📓 Livrables accessibles dans ton Espace Client. Tarifs & disponibilités
+        tiers susceptibles d’évoluer.
       </div>
 
       <TravelBookletGallery
         items={[...BOOKLETS]}
         kicker="Exemples de carnets de voyage"
-        title="Visualise un carnet (comme tu le recevras) &#x1F447;"
+        title="Visualise un carnet (comme tu le recevras) 👇"
         moreHref="/carnets-de-voyage"
         moreLabel="En savoir plus →"
       />

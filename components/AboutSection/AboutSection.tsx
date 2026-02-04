@@ -28,23 +28,38 @@ export function AboutSection() {
   return (
     <section className={styles.section} id="traveltactik">
       <div className={styles.card}>
-        <div className={styles.kicker}>TravelTactik</div>
-        <h2 className={styles.h2}>Agence de conseil en voyage</h2>
+        <div className={styles.kicker}>
+          <img
+            src="/images/LogoTravel.png"
+            width="44"
+            height={55}
+            alt="Logo Travel Tactik"
+          />
+          Travel Tactik
+        </div>
+        <h2 className={styles.h2}>Conseil en organisation de voyages</h2>
 
         <p className={styles.p}>
           Voyager coûte souvent cher pour une raison simple : on réserve vite,
-          sans arbitrage, et on paye des erreurs. TravelTactik construit un plan
-          cohérent (temps + budget + confort) grâce à une méthode, des
-          alternatives et un réseau terrain pour obtenir de meilleures options,
-          sans que vous n'ayez à y passer des heures.
+          sans arbitrage, et on paye des erreurs (horaires, fatigue, mauvais
+          emplacement). Travel Tactik construit un plan cohérent{" "}
+          <strong>(temps + budget + confort)</strong> grâce à une méthode de
+          recherche, des alternatives, et un cadrage clair sans que tu aies à y
+          passer des heures.
         </p>
 
         <div className={styles.notice}>
-          TravelTactik conseille uniquement : tu restes le seul à réserver tes
-          billets et tes prestations. Aucune commission n’est perçue sur tes
-          réservations : notre rémunération provient uniquement de la formule de
-          conseil. Résultat : un plan indépendant, pensé pour te faire gagner du
-          temps et éviter les mauvais choix.
+          Travel Tactik conseille uniquement : tu restes le seul à réserver tes
+          billets et tes prestations.
+          <br />
+          <strong>
+            {" "}
+            Aucune commission n’est perçue sur tes réservations
+          </strong>{" "}
+          : la rémunération provient uniquement de la prestation de conseil.
+          <br />
+          Résultat : un plan indépendant, pensé pour te faire gagner du temps et
+          éviter les mauvais choix.
         </div>
 
         <div className={styles.social}>

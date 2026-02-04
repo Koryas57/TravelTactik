@@ -3,19 +3,27 @@ import styles from "./FAQ.module.scss";
 const items = [
   {
     q: "Pourquoi payer alors que les comparateurs de vols existent ? ✈️",
-    a: "Parce qu’un comparateur affiche des prix, il ne construit pas un voyage. Il ne te dira pas si un itinéraire te fait perdre du temps, si une escale est pénible, ni quelles alternatives offrent un meilleur confort pour un budget équivalent. TravelTactik fournit un plan cohérent : choix, arbitrages, alternatives et une logique globale (temps + budget + confort).",
+    a: "Un comparateur affiche des prix, mais il ne construit pas un voyage. Il ne te dira pas si un itinéraire te fait perdre du temps, si une escale est pénible, ni quelles alternatives offrent un meilleur confort pour un budget proche. Travel Tactik te donne un plan cohérent : choix, arbitrages, options + alternatives (temps + budget + confort).",
   },
   {
     q: "Tu touches une commission sur mes réservations ? 💳",
-    a: "Non. Tu réserves toi-même, directement sur les sites officiels. Notre modèle est volontairement simple et transparent : nous vendons une analyse et une sélection (€/dossier), pas des commissions. Aucun intérêt caché : si une option n’est pas pertinente pour toi, nous ne la proposons pas.",
+    a: "Non. Tu réserves toi-même, directement sur les sites officiels. Travel Tactik vend une prestation de conseil (analyse + sélection), pas des commissions. Aucun intérêt caché : si une option n’est pas pertinente pour toi, elle ne sera pas proposée.",
   },
   {
     q: "Et si les prix bougent après ? 📈",
-    a: "C’est normal : les prix évoluent en permanence. C’est pour ça que nous fournissons plusieurs options viables, des alternatives et une méthode pour ajuster si un tarif change. Et si tu veux verrouiller un point précis, nous pouvons itérer une fois pour affiner.",
+    a: "C’est normal : vols et hébergements évoluent en permanence. Les prix communiqués correspondent à un instant T. Pour limiter les mauvaises surprises, tu reçois plusieurs options viables et des alternatives. Si un point clé change (prix/stock), une itération est possible pour ajuster dans le périmètre initial.",
   },
   {
     q: "Quelle est la différence entre Éco / Confort / Premium ? ⚖️",
-    a: "Éco : priorité au budget, sans choix absurdes. Confort : équilibre prix / fatigue / fluidité. Premium : priorité au confort et à la réduction maximale des frictions (horaires, escales, logistique). Dans tous les cas, l’objectif reste le même : un voyage clair, cohérent et bien pensé.",
+    a: "Éco : priorité au budget, sans choix absurdes. Confort : équilibre prix / fatigue / fluidité. Premium : priorité au confort et à la réduction maximale des frictions (horaires, escales, logistique). Objectif commun : un voyage clair, cohérent, et adapté à toi.",
+  },
+  {
+    q: "Quand est-ce que je reçois le devis et les documents ? ⏱️",
+    a: "En pratique : devis sous ~3 jours ouvrés après réception d’un brief complet. Après paiement, le PDF “Tarifs & Liens” est généralement mis à disposition sous moins de 24 h. Le Carnet de voyage (option) est généralement livré sous ~3 jours ouvrés après stabilisation des choix.",
+  },
+  {
+    q: "Remboursement / droit de rétractation : comment ça marche ? 🧾",
+    a: "La prestation est personnalisée et délivrée rapidement (mise à disposition de documents numériques). Une fois le livrable accessible dans ton Espace Client, la prestation est considérée comme exécutée. Les modalités exactes (rétractation, exceptions, exécution immédiate) sont précisées dans les CGV au moment du paiement.",
   },
 ];
 

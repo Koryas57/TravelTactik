@@ -5,28 +5,34 @@
 .card {
   border: 1px solid var(--tt-border);
   border-radius: var(--tt-radius-lg);
-  background: var(--tt-card);
+  background: linear-gradient(#020617d6, #0206172e), url(/images/hero2.jpg);
+  background-position: top;
   box-shadow: var(--tt-shadow);
   padding: 16px;
 }
 
 .kicker {
-  font-size: 12px;
+  font-size: 1.1rem;
   font-weight: 900;
-  color: var(--tt-muted);
+  font-family: var(--font-sora);
+  color: var(--tt-logo);
   text-transform: uppercase;
   letter-spacing: 0.6px;
+  display: flex;
+  align-items: center;
 }
 
 .h2 {
   margin: 8px 0 8px;
   font-size: 22px;
   line-height: 1.2;
+  color: #ffffffdb;
+  font-weight: 800;
 }
 
 .p {
   margin: 0;
-  color: rgba(15, 23, 42, 0.85);
+  color: #ffffffdb;
   font-weight: 450;
   line-height: 1.65;
   max-width: 80ch;
@@ -36,7 +42,7 @@
   margin-top: 12px;
   padding: 12px;
   border-radius: 12px;
-  background: rgba(2, 6, 23, 0.04);
+  background: linear-gradient(160deg, #fff, #ffffff30);
   border: 1px solid var(--tt-border);
   font-weight: 550;
   color: rgba(15, 23, 42, 0.9);
