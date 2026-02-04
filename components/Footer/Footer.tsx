@@ -43,6 +43,7 @@ export function Footer() {
             <Link href="/contact">Contact</Link>
             <Link href="/mentions-legales">Mentions légales</Link>
             <Link href="/confidentialite">Confidentialité</Link>
+            <Link href="/cgv">Conditions générales</Link>
           </div>
         </div>
       </div>
