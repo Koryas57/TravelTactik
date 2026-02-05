@@ -3,7 +3,6 @@
   background: transparent;
   cursor: pointer;
   perspective: 1200px;
-
   /* CRUCIAL: autorise la grid à shrink sur mobile */
   min-width: 0;
 }
@@ -25,7 +24,6 @@
 
 .face {
   grid-area: 1 / 1;
-  border: 1px solid var(--tt-border);
   border-radius: 18px;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.65);
