@@ -67,9 +67,11 @@ export function OffersPreviewFromOffres() {
           <p className={styles.p}>
             <strong>
               Les prix affichés correspondent à une estimation au moment de la
-              recherche (vol + hébergement). Les disponibilités et tarifs
-              peuvent évoluer.
+              recherche (vol + hébergement).
             </strong>
+          </p>
+          <p className={styles.p}>
+            <strong>Les disponibilités et tarifs peuvent évoluer.</strong>
           </p>
         </div>
 

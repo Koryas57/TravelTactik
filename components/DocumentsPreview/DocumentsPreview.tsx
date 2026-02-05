@@ -76,6 +76,8 @@ export function DocumentsPreview() {
           <p className={styles.p}>
             Travel Tactik te fournit une sélection claire et des liens de
             réservation.
+          </p>
+          <p className={styles.p}>
             <strong>
               {" "}
               Tu restes entièrement décisionnaire et tu réserves toi-même{" "}
