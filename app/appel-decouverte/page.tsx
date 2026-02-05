@@ -96,8 +96,8 @@ export default function AppelDecouvertePage() {
       <main className={`container ${styles.page}`}>
         <header className={styles.hero}>
           <div>
-            <span className={styles.eyebrow}>Appel découverte</span>
-            <h1 className={styles.h1}>Réserve ton appel gratuit</h1>
+            <span className={styles.eyebrow}>Appel découverte 📲</span>
+            <h1 className={styles.h1}>Réserve ton appel gratuit !</h1>
             <p className={styles.lead}>
               30 minutes pour cadrer destination, dates, budget et priorités
               afin de préparer un voyage impeccable.
@@ -119,7 +119,7 @@ export default function AppelDecouvertePage() {
           </div>
 
           <aside className={styles.right}>
-            <div className={styles.card}>
+            <div className={styles.card2}>
               <div className={styles.cardTitle}>Prépare l’appel</div>
 
               <ul className={styles.bullets}>

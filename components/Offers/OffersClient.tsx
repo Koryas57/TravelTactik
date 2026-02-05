@@ -303,9 +303,9 @@ export function OffersClient() {
 
   const chipsLabel =
     category || tier
-      ? `${category ? `Catégorie: ${category}` : ""}${category && tier ? " • " : ""}${
+      ? `${category ? `Catégorie : ${category}` : ""}${category && tier ? " • " : ""}${
           tier
-            ? `Gamme: ${tier === "eco" ? "Éco" : tier === "comfort" ? "Confort" : "Premium"}`
+            ? `Gamme : ${tier === "eco" ? "Éco" : tier === "comfort" ? "Confort" : "Premium"}`
             : ""
         }`
       : "Aucun filtre rapide sélectionné";
@@ -383,74 +383,69 @@ export function OffersClient() {
             </select>
           </label>
         </div>
+      </div>
 
-        <div className={styles.divider} />
+      <div className={styles.chips}>
+        <div className={styles.chipsGroup}>
+          <div className={styles.chipsTitle}>Catégories</div>
 
-        <div className={styles.toolbarTitle}>Filtres rapides</div>
-
-        <div className={styles.chips}>
-          <div className={styles.chipsGroup}>
-            <div className={styles.chipsTitle}>Catégories</div>
-
-            <div className={styles.chipsRail}>
-              <div
-                className={styles.chipsRow}
-                role="list"
-                aria-label="Catégories"
+          <div className={styles.chipsRail}>
+            <div
+              className={styles.chipsRow}
+              role="list"
+              aria-label="Catégories"
+            >
+              <button
+                type="button"
+                className={`${styles.chip} ${category === "" ? styles.chipOn : ""}`}
+                onClick={() => setCategory("")}
+                aria-pressed={category === ""}
+                role="listitem"
               >
+                Toutes
+              </button>
+
+              {CATEGORIES.map((c) => (
                 <button
+                  key={c}
                   type="button"
-                  className={`${styles.chip} ${category === "" ? styles.chipOn : ""}`}
-                  onClick={() => setCategory("")}
-                  aria-pressed={category === ""}
+                  className={`${styles.chip} ${category === c ? styles.chipOn : ""}`}
+                  onClick={() => setQuickCategory(c)}
+                  aria-pressed={category === c}
                   role="listitem"
                 >
-                  Toutes
+                  {c}
                 </button>
-
-                {CATEGORIES.map((c) => (
-                  <button
-                    key={c}
-                    type="button"
-                    className={`${styles.chip} ${category === c ? styles.chipOn : ""}`}
-                    onClick={() => setQuickCategory(c)}
-                    aria-pressed={category === c}
-                    role="listitem"
-                  >
-                    {c}
-                  </button>
-                ))}
-              </div>
+              ))}
             </div>
           </div>
+        </div>
 
-          <div className={styles.chipsGroup}>
-            <div className={styles.chipsTitle}>Gamme</div>
+        <div className={styles.chipsGroup}>
+          <div className={styles.chipsTitle}>Gamme</div>
 
-            <div className={styles.chipsRail}>
-              <div className={styles.chipsRow} role="list" aria-label="Gamme">
-                {(["eco", "comfort", "premium"] as const).map((t) => (
-                  <button
-                    key={t}
-                    type="button"
-                    className={`${styles.chip} ${tier === t ? styles.chipOn : ""}`}
-                    onClick={() => setQuickTier(t)}
-                    aria-pressed={tier === t}
-                    role="listitem"
-                  >
-                    {t === "eco"
-                      ? "Éco"
-                      : t === "comfort"
-                        ? "Confort"
-                        : "Premium"}
-                  </button>
-                ))}
-              </div>
+          <div className={styles.chipsRail}>
+            <div className={styles.chipsRow} role="list" aria-label="Gamme">
+              {(["eco", "comfort", "premium"] as const).map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  className={`${styles.chip} ${tier === t ? styles.chipOn : ""}`}
+                  onClick={() => setQuickTier(t)}
+                  aria-pressed={tier === t}
+                  role="listitem"
+                >
+                  {t === "eco"
+                    ? "Éco"
+                    : t === "comfort"
+                      ? "Confort"
+                      : "Premium"}
+                </button>
+              ))}
             </div>
           </div>
         </div>
       </div>
-
       {error ? <div className={styles.error}>{error}</div> : null}
       {loading ? <div className={styles.muted}>Chargement…</div> : null}
 

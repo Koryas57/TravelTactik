@@ -20,7 +20,9 @@
   display: inline-flex;
   padding: 6px 12px;
   border-radius: 999px;
-  background: rgba(2, 6, 23, 0.08);
+  background:
+    linear-gradient(135deg, #cececd, #f6f2ed), url("/images/appelprep3.jpg");
+
   font-size: 12px;
   font-weight: 900;
   letter-spacing: 0.6px;
@@ -36,19 +38,19 @@
 .lead {
   margin: 0;
   color: var(--tt-muted);
-  font-weight: 450;
+  font-weight: 550;
   line-height: 1.55;
   max-width: 70ch;
 }
 
 .heroCard {
-  border: 1px solid var(--tt-border);
   border-radius: 18px;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.9),
-    rgba(248, 250, 252, 0.9)
-  );
+  background-image:
+    linear-gradient(135deg, #ffffffe8, #ffffffa1), url("/images/appelprep.jpg");
+  background-position: top;
+  background-size: cover;
+  backdrop-filter: blur(10px);
+  filter: drop-shadow(-2px 0 2px #00000080);
   padding: 18px;
   box-shadow: var(--tt-shadow);
 }
@@ -88,11 +90,27 @@
 }
 
 .card {
-  border: 1px solid var(--tt-border);
-  border-radius: var(--tt-radius-lg);
-  background-image: url("/images/hero3.png");
+  border-radius: 18px;
+  background-image:
+    linear-gradient(135deg, #ffffffe8, #ffffffa1), url("/images/appelprep2.jpg");
+  background-position: top;
+  background-size: cover;
+  backdrop-filter: blur(10px);
+  filter: drop-shadow(-2px 0 2px #00000080);
+  padding: 18px;
   box-shadow: var(--tt-shadow);
-  padding: 14px;
+}
+
+.card2 {
+  border-radius: 18px;
+  background-image:
+    linear-gradient(135deg, #ffffffd1, #ffffffde), url("/images/appelprep3.jpg");
+  background-position: top;
+  background-size: cover;
+  backdrop-filter: blur(10px);
+  filter: drop-shadow(-2px 0 2px #00000080);
+  padding: 18px;
+  box-shadow: var(--tt-shadow);
 }
 
 .cardTitle {
