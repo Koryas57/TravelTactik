@@ -1,6 +1,6 @@
 import styles from "./PlanCard.module.scss";
 
-type DocType = "tarifs" | "descriptif" | "carnet";
+type DocType = "tarifs" | "carnet";
 type LeadDoc = {
   doc_type: DocType;
   status: "pending" | "ready";
@@ -20,11 +20,10 @@ type Props = {
   documents: LeadDoc[];
 };
 
-const DOCS: DocType[] = ["tarifs", "descriptif", "carnet"];
+const DOCS: DocType[] = ["tarifs", "carnet"];
 
 const DOC_LABELS: Record<DocType, string> = {
   tarifs: "PDF Tarifs",
-  descriptif: "PDF Descriptif",
   carnet: "Carnet de voyage",
 };
 
@@ -40,7 +39,6 @@ export function PlanCard(props: Props) {
   const isPaid = props.paymentStatus === "paid";
   const docMap = toDocMap(props.documents);
 
-  // fallback “premium” sans images réelles pour l’instant
   const bgClass =
     props.pack === "concierge"
       ? styles.bgPremium

@@ -1,9 +1,9 @@
-import { AdminLeadsClient } from "../../components/Admin/AdminLeadsClient";
+import { AdminQuotesClient } from "../../components/Admin/AdminQuotesClient";
 
 export const metadata = {
-  title: "Admin — Leads",
+  title: "Admin / Synthèse & Devis",
 };
 
 export default function AdminPage() {
-  return <AdminLeadsClient />;
+  return <AdminQuotesClient />;
 }

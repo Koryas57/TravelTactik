@@ -157,3 +157,40 @@
   color: var(--tt-muted);
   font-weight: 700;
 }
+
+.payBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--tt-border);
+  background: #0f172a;
+  color: #fff;
+  font-weight: 900;
+}
+
+.payBtn:disabled {
+  opacity: 0.6;
+}
+
+.error {
+  margin-top: 8px;
+  color: #b91c1c;
+  font-weight: 700;
+}
+
+.mySpaceNav {
+  border: 1px solid var(--tt-border);
+  background: #fff9;
+  border-radius: 18px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 2vh;
+  & a {
+    font-size: 16px;
+    font-weight: 700;
+  }
+}

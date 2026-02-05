@@ -27,11 +27,14 @@ export default async function FavoritesPage() {
 
   return (
     <div className={styles.wrap}>
-      <h1 className={styles.h1}>Mes favoris</h1>
+      <h1 className={styles.h1}>Mes favoris ⭐</h1>
       {!rows?.length ? (
         <p className={styles.muted}>
-          Tu n’as encore aucun favori. Va sur la page Offres pour en
-          enregistrer.
+          Tu n’as encore aucun favori. Va sur la page{" "}
+          <a href="/offres">
+            <strong>Offres</strong>
+          </a>{" "}
+          pour en enregistrer.
         </p>
       ) : (
         <div className={styles.grid}>

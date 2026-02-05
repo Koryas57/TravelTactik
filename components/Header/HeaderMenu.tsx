@@ -177,14 +177,21 @@ export function HeaderMenu({ openCheckout }: Props) {
               ) : authed ? (
                 <div className={styles.links}>
                   <Link className={styles.link} href="/app" onClick={close}>
-                    Mon espace
+                    Mon Espace
                   </Link>
                   <Link
                     className={styles.link}
                     href="/app/plans"
                     onClick={close}
                   >
-                    Mes plans
+                    Mes Plans de Voyage
+                  </Link>
+                  <Link
+                    className={styles.link}
+                    href="/app/synthese-et-devis"
+                    onClick={close}
+                  >
+                    Synthèse et Devis
                   </Link>
                   <Link
                     className={styles.link}

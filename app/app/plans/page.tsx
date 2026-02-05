@@ -1,10 +1,11 @@
+import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../auth";
 import { getSql } from "../../../lib/db";
 import styles from "./Plans.module.scss";
 import { PlanCard } from "../../../components/Plans/PlanCard";
 
-type DocType = "tarifs" | "descriptif" | "carnet";
+type DocType = "tarifs" | "carnet";
 
 type LeadDoc = {
   doc_type: DocType;
@@ -21,13 +22,8 @@ type LeadRow = {
   payment_status: string | null;
   created_at: string;
   paid_at: string | null;
+  notes: string | null;
   documents: LeadDoc[];
-};
-
-const DOC_LABELS: Record<DocType, string> = {
-  tarifs: "PDF Tarifs",
-  descriptif: "PDF Descriptif",
-  carnet: "Carnet de voyage",
 };
 
 export default async function PlansPage() {
@@ -38,12 +34,21 @@ export default async function PlansPage() {
 
   const sql = getSql();
 
-  // Paid en premier, puis récent.
-  // On agrège les documents en JSON pour éviter N requêtes.
+  await sql`
+    delete from leads
+    where lower(email) = ${email}
+      and payment_status <> 'paid'
+      and brief ? 'status'
+      and brief->>'status' = 'published'
+      and brief ? 'expiresAt'
+      and (brief->>'expiresAt')::timestamptz < now();
+  `;
+
   const rows = (await sql`
     select
       l.id,
       l.brief,
+      l.notes,
       l.pack,
       l.speed,
       l.price_eur,
@@ -69,32 +74,35 @@ export default async function PlansPage() {
     limit 50;
   `) as LeadRow[];
 
+  const paidRows = rows.filter((r) => r.payment_status === "paid");
+
   return (
     <div className={styles.wrap}>
       <div className={styles.top}>
         <div>
-          <h1 className={styles.h1}>Mes plans de voyage</h1>
+          <h1 className={styles.h1}>Mes plans de voyage 🗺️</h1>
           <br />
           <p className={styles.sub}>
-            Retrouve ici tes demandes, leurs statut, ainsi que tes documents et
+            Retrouve ici tes demandes, leur statut, ainsi que tes documents et
             ton carnet de voyage.
           </p>
           <br />
         </div>
       </div>
 
-      {!rows?.length ? (
+      {!paidRows.length ? (
         <div className={styles.empty}>
           <p className={styles.muted}>
-            Aucun plan pour l’instant. Tu peux en créer un depuis l’accueil.
+            Aucun plan validé pour l’instant. Tu peux en créer un depuis
+            l’accueil.
           </p>
-          <a className={styles.primaryLink} href="/">
-            Retour à l’accueil
-          </a>
+          <Link className={styles.primaryLink} href="/app">
+            Retourner à mon Espace Client
+          </Link>
         </div>
       ) : (
         <div className={styles.grid}>
-          {rows.map((r) => {
+          {paidRows.map((r) => {
             const destination = r.brief?.destination || "Destination flexible";
             const durationDays = r.brief?.durationDays ?? "—";
             const travelers = r.brief?.travelers ?? "—";
