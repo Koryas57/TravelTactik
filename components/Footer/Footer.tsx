@@ -40,7 +40,7 @@ export function Footer() {
         <div className={styles.col}>
           <div className={styles.title}>Légal</div>
           <div className={styles.links}>
-            <Link href="/contact">Contact</Link>
+            <Link href="/appel-decouverte">Contact</Link>
             <Link href="/mentions-legales">Mentions légales</Link>
             <Link href="/confidentialite">Confidentialité</Link>
             <Link href="/cgv">Conditions générales</Link>
