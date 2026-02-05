@@ -115,6 +115,18 @@ export async function POST(
       );
     }
 
+    const existingDocRows = await sql`
+      select status, url
+      from lead_documents
+      where lead_id = ${id}::uuid
+        and doc_type = ${docType}
+      limit 1;
+    `;
+
+    const previousDoc = existingDocRows?.[0] as
+      | { status: DocStatus; url: string | null }
+      | undefined;
+
     const rows = await sql`
       insert into lead_documents (lead_id, doc_type, status, url)
       values (${id}::uuid, ${docType}, ${status}, ${nextUrl})
@@ -126,7 +138,10 @@ export async function POST(
       returning lead_id, doc_type, status, url, updated_at;
     `;
 
-    if (shouldNotifyDelivery(docType, status)) {
+    const justBecameReady =
+      shouldNotifyDelivery(docType, status) && previousDoc?.status !== "ready";
+
+    if (justBecameReady) {
       const baseUrl =
         process.env.NEXT_PUBLIC_SITE_URL ||
         process.env.SITE_URL ||

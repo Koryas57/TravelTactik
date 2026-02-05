@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../../auth";
 import { getSql } from "../../../../lib/db";
+import { sendLeadDeliveredEmail } from "../../../../lib/mailer";
 
 async function requireAdmin() {
   const session = await getServerSession(authOptions);
@@ -30,18 +31,14 @@ export async function GET() {
   try {
     const sql = getSql();
 
-    // Nettoyage des devis publiés expirés (safe cast)
     await sql`
       delete from leads
       where coalesce(payment_status, 'pending') <> 'paid'
         and brief ? 'status'
         and brief->>'status' = 'published'
-        and case
-          when jsonb_typeof(brief->'expiresAt') = 'string'
-               and brief->>'expiresAt' ~ '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$'
-          then (brief->>'expiresAt')::timestamptz < now()
-          else false
-        end;
+        and brief ? 'expiresAt'
+        and brief->>'expiresAt' ~ '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}'
+        and (brief->>'expiresAt')::timestamptz < now();
     `;
 
     const rows = await sql`
@@ -57,13 +54,13 @@ export async function GET() {
         l.payment_status,
         l.brief,
         l.created_at as quote_created_at,
-        coalesce(l.updated_at, l.created_at) as quote_updated_at
+        l.created_at as quote_updated_at
       from users u
       left join lateral (
         select *
         from leads l
         where l.user_id = u.id
-        order by coalesce(l.updated_at, l.created_at) desc, l.created_at desc
+        order by l.created_at desc
         limit 1
       ) l on true
       order by u.updated_at desc
@@ -176,10 +173,23 @@ export async function POST(req: Request) {
       returning id;
     `;
 
-    return NextResponse.json(
-      { ok: true, quoteId: rows?.[0]?.id },
-      { status: 200 },
-    );
+    const quoteId = rows?.[0]?.id;
+
+    if (publish && quoteId) {
+      const baseUrl =
+        process.env.NEXT_PUBLIC_SITE_URL ||
+        process.env.SITE_URL ||
+        "https://travel-tactik.com";
+      const plansUrl = `${baseUrl.replace(/\/$/, "")}/app/plans`;
+
+      await sendLeadDeliveredEmail({
+        leadId: String(quoteId),
+        email,
+        plansUrl,
+      });
+    }
+
+    return NextResponse.json({ ok: true, quoteId }, { status: 200 });
   } catch (error) {
     console.error("[api/admin/clients] POST error:", error);
     return NextResponse.json(
