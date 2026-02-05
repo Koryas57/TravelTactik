@@ -10,7 +10,7 @@ export default async function AppHome() {
     <main className="container" style={{ padding: "32px 0" }}>
       <h1> Mon Espace Client 🧭</h1>
       <p style={{ color: "var(--tt-muted)" }}>
-        Connecté en tant que : <strong>{session?.user?.email ?? "—"}</strong>
+        Connecté(e) en tant que : <strong>{session?.user?.email ?? "—"}</strong>
       </p>
 
       <div className={style.mySpaceNav}>
