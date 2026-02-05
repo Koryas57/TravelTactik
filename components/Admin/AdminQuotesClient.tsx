@@ -47,13 +47,13 @@ export function AdminQuotesClient() {
   }, []);
 
   return (
-    <main className="container" style={{ padding: "28px 0" }}>
+    <main className="container">
       <div className={styles.top}>
         <div>
           <h1 className={styles.h1}>Admin / Synthèse & Devis</h1>
           <p className={styles.sub}>
-            Prépare puis publie les synthèses/devis pour les utilisateurs ayant
-            un Espace Client.
+            Prépare puis publie les Synthèses & Devis pour les utilisateurs
+            ayant un Espace Client.
           </p>
         </div>
 
@@ -123,12 +123,13 @@ function QuoteEditor({ row, onDone }: { row: Row; onDone: () => void }) {
   return (
     <article
       style={{
-        border: "1px solid var(--tt-border)",
         borderRadius: 14,
-        background: "#fff",
+        background: "linear-gradient(91deg, #00038d52, #874d4d08)",
         padding: 14,
         display: "grid",
         gap: 10,
+        boxShadow: "-2px 0 6px 0px #000000a3",
+        margin: "3vh auto",
       }}
     >
       <div
@@ -151,59 +152,92 @@ function QuoteEditor({ row, onDone }: { row: Row; onDone: () => void }) {
       </div>
 
       <label>
-        Destination
+        Destination :
         <input
           value={destination}
           onChange={(e) => setDestination(e.target.value)}
-          style={{ width: "100%" }}
+          style={{
+            width: "max-content",
+            margin: "1vh",
+            borderRadius: "10px",
+            border: "1px solid transparent",
+            padding: "3px",
+          }}
         />
       </label>
 
       <label>
-        Synthèse de l&apos;appel
+        Synthèse de l&apos;appel :
         <textarea
           value={callSummary}
           onChange={(e) => setCallSummary(e.target.value)}
-          rows={4}
-          style={{ width: "100%" }}
+          rows={15}
+          style={{
+            width: "100%",
+            margin: "1vh auto",
+            borderRadius: "10px",
+            border: "1px solid transparent",
+            padding: "3px",
+          }}
         />
       </label>
 
       <label>
-        Détails du devis
+        Détails du devis :
         <textarea
           value={quoteDetails}
           onChange={(e) => setQuoteDetails(e.target.value)}
-          rows={4}
-          style={{ width: "100%" }}
+          rows={15}
+          style={{
+            width: "100%",
+            margin: "1vh auto",
+            borderRadius: "10px",
+            border: "1px solid transparent",
+            padding: "3px",
+          }}
         />
       </label>
 
       <div
         style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
-          gap: 10,
+          display: "flex",
+          alignItems: "center",
+          flexWrap: "nowrap",
+          flexDirection: "row-reverse",
         }}
       >
         <label>
-          Prix (€)
+          Prix en €
           <input
             value={priceEUR}
             onChange={(e) => setPriceEUR(e.target.value)}
             type="number"
             min={0}
-            style={{ width: "100%" }}
+            style={{
+              width: "50px",
+              margin: "1vh",
+              borderRadius: "10px",
+              border: "1px solid transparent",
+              padding: "3px",
+              textAlign: "center",
+            }}
           />
         </label>
         <label>
-          Durée (j)
+          Durée
           <input
             value={durationDays}
             onChange={(e) => setDurationDays(e.target.value)}
             type="number"
             min={1}
-            style={{ width: "100%" }}
+            style={{
+              width: "30px",
+              margin: "1vh",
+              borderRadius: "10px",
+              border: "1px solid transparent",
+              padding: "3px",
+              textAlign: "center",
+            }}
           />
         </label>
         <label>
@@ -213,17 +247,31 @@ function QuoteEditor({ row, onDone }: { row: Row; onDone: () => void }) {
             onChange={(e) => setTravelers(e.target.value)}
             type="number"
             min={1}
-            style={{ width: "100%" }}
+            style={{
+              width: "30px",
+              margin: "1vh",
+              borderRadius: "10px",
+              border: "1px solid transparent",
+              padding: "3px",
+              textAlign: "center",
+            }}
           />
         </label>
         <label>
-          Budget max
+          Budget max en €
           <input
             value={budgetMax}
             onChange={(e) => setBudgetMax(e.target.value)}
             type="number"
             min={0}
-            style={{ width: "100%" }}
+            style={{
+              width: "50px",
+              margin: "1vh",
+              borderRadius: "10px",
+              border: "1px solid transparent",
+              padding: "3px",
+              textAlign: "center",
+            }}
           />
         </label>
       </div>
@@ -243,7 +291,7 @@ function QuoteEditor({ row, onDone }: { row: Row; onDone: () => void }) {
           onClick={() => save(true)}
           disabled={saving}
         >
-          {saving ? "..." : "Publier dans l&apos;espace client"}
+          {saving ? "..." : "Publier dans l'espace client"}
         </button>
       </div>
     </article>

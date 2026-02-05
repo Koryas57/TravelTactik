@@ -30,13 +30,18 @@ export async function GET() {
   try {
     const sql = getSql();
 
+    // Nettoyage des devis publiés expirés (safe cast)
     await sql`
       delete from leads
-      where payment_status <> 'paid'
+      where coalesce(payment_status, 'pending') <> 'paid'
         and brief ? 'status'
         and brief->>'status' = 'published'
-        and brief ? 'expiresAt'
-        and (brief->>'expiresAt')::timestamptz < now();
+        and case
+          when jsonb_typeof(brief->'expiresAt') = 'string'
+               and brief->>'expiresAt' ~ '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$'
+          then (brief->>'expiresAt')::timestamptz < now()
+          else false
+        end;
     `;
 
     const rows = await sql`
@@ -52,13 +57,13 @@ export async function GET() {
         l.payment_status,
         l.brief,
         l.created_at as quote_created_at,
-        l.updated_at as quote_updated_at
+        coalesce(l.updated_at, l.created_at) as quote_updated_at
       from users u
       left join lateral (
         select *
         from leads l
         where l.user_id = u.id
-        order by l.created_at desc
+        order by coalesce(l.updated_at, l.created_at) desc, l.created_at desc
         limit 1
       ) l on true
       order by u.updated_at desc
