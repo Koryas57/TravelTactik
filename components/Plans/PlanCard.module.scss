@@ -1,8 +1,8 @@
 .card {
-  border: 1px solid var(--tt-border);
   border-radius: 18px;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.6);
+  box-shadow: 0px 0 3px #00000080;
 }
 
 .media {
@@ -28,11 +28,7 @@
 }
 
 .bgEco {
-  background: linear-gradient(
-    135deg,
-    rgba(59, 130, 246, 0.22),
-    rgba(245, 158, 11, 0.16)
-  );
+  background: linear-gradient(240deg, #babbe552, #ffffffad);
 }
 
 .bgComfort {
@@ -71,17 +67,22 @@
 }
 
 .badge {
-  font-weight: 900;
-  padding: 8px 12px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  background: rgba(255, 255, 255, 0.28);
   backdrop-filter: blur(10px);
+  background: #429842;
+  border: 1px solid #ffffff59;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 0 0 3px #0000002e;
 }
 
 .kpis {
-  color: rgba(0, 0, 0, 0.72);
+  color: #000000b8;
   font-weight: 700;
+  display: flex;
+  gap: 5px;
+  justify-content: center;
 }
 
 .packLine {
@@ -164,10 +165,11 @@
   justify-content: center;
   padding: 11px 14px;
   border-radius: 12px;
-  border: 1px solid var(--tt-border);
-  background: #0f172a;
+  background: #429842;
   color: #fff;
   font-weight: 900;
+  box-shadow: 0px 0 3px #00000080;
+  border: 1px solid transparent;
 }
 
 .payBtn:disabled {

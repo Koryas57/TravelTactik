@@ -36,7 +36,7 @@ function toDocMap(documents: LeadDoc[]) {
 }
 
 export function PlanCard(props: Props) {
-  const isPaid = props.paymentStatus === "paid";
+  const isPaid = props.paymentStatus === "Paiement reçu";
   const docMap = toDocMap(props.documents);
 
   const bgClass =
