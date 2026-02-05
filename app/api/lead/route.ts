@@ -282,14 +282,23 @@ export async function POST(req: Request) {
 
     console.log("[Traveltactik] Lead inserted:", { leadId });
 
-    // Emails + timeout
-    const emailResult = await withTimeout(
-      sendLeadEmails(String(leadId), { ...body, email: emailLower, notes }),
-      15000,
-      "sendLeadEmails",
-    );
+    // Emails: UNIQUEMENT depuis le formulaire /appel-decouverte
+    const fromContactForm = body.page === "/appel-decouverte";
 
-    console.log("[Traveltactik] sendLeadEmails OK", { leadId, emailResult });
+    if (fromContactForm) {
+      const emailResult = await withTimeout(
+        sendLeadEmails(String(leadId), { ...body, email: emailLower, notes }),
+        15000,
+        "sendLeadEmails",
+      );
+
+      console.log("[Traveltactik] sendLeadEmails OK", { leadId, emailResult });
+    } else {
+      console.log("[Traveltactik] sendLeadEmails skipped (non-contact flow)", {
+        leadId,
+        page: body.page,
+      });
+    }
 
     return NextResponse.json({ ok: true, leadId }, { status: 200 });
   } catch (err) {

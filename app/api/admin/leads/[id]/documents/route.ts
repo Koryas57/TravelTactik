@@ -2,6 +2,7 @@ export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";
 import { getSql } from "../../../../../../lib/db";
+import { sendLeadDeliveredEmail } from "../../../../../../lib/mailer";
 
 type DocType = "tarifs" | "descriptif" | "carnet";
 type DocStatus = "pending" | "ready";
@@ -24,12 +25,14 @@ function isSafeHttpUrl(v: string) {
   try {
     const u = new URL(v);
     if (u.protocol !== "https:") return false;
-    // option: restreindre à Vercel Blob
-    // if (!u.hostname.endsWith("blob.vercel-storage.com")) return false;
     return true;
   } catch {
     return false;
   }
+}
+
+function shouldNotifyDelivery(docType: DocType, status: DocStatus) {
+  return status === "ready" && (docType === "tarifs" || docType === "carnet");
 }
 
 export async function POST(
@@ -97,14 +100,15 @@ export async function POST(
   try {
     const sql = getSql();
 
-    // Optionnel mais propre: vérifier que le lead existe
-    const lead = await sql`
-      select id
+    const leadRows = await sql`
+      select id, email
       from leads
       where id = ${id}::uuid
       limit 1;
     `;
-    if (!lead?.length) {
+
+    const lead = leadRows?.[0];
+    if (!lead) {
       return NextResponse.json(
         { ok: false, error: "Lead not found" },
         { status: 404 },
@@ -121,6 +125,26 @@ export async function POST(
         updated_at = now()
       returning lead_id, doc_type, status, url, updated_at;
     `;
+
+    if (shouldNotifyDelivery(docType, status)) {
+      const baseUrl =
+        process.env.NEXT_PUBLIC_SITE_URL ||
+        process.env.SITE_URL ||
+        "https://travel-tactik.com";
+      const plansUrl = `${baseUrl.replace(/\/$/, "")}/app/plans`;
+
+      await sendLeadDeliveredEmail({
+        leadId: String(id),
+        email: String(lead.email),
+        plansUrl,
+      });
+
+      await sql`
+        update leads
+        set delivered_at = now()
+        where id = ${id}::uuid;
+      `;
+    }
 
     return NextResponse.json({ ok: true, row: rows?.[0] }, { status: 200 });
   } catch (err) {

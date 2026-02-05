@@ -6,8 +6,9 @@ import type Stripe from "stripe";
 
 import { getStripe } from "../../../../lib/stripe";
 import { getSql } from "../../../../lib/db";
-import { sendLeadEmails } from "../../../../lib/mailer";
+import { sendPaymentConfirmedEmails } from "../../../../lib/mailer";
 
+// simple UUID v4/v7-ish check (suffisant pour éviter du garbage)
 function isUuid(v: unknown): v is string {
   return (
     typeof v === "string" &&
@@ -33,6 +34,8 @@ async function handleCheckoutPaid(event: Stripe.Event) {
   const paymentIntentId =
     typeof session.payment_intent === "string" ? session.payment_intent : null;
 
+  // 1) Idempotence: n'exécuter qu'une fois (si déjà 'paid', on stop)
+  // On update seulement si pas encore payé
   const updated = await sql`
     update leads
     set payment_status = 'paid',
@@ -44,6 +47,7 @@ async function handleCheckoutPaid(event: Stripe.Event) {
     returning id;
   `;
 
+  // Si 0 lignes: déjà traité -> on sort sans renvoyer d'emails
   if (!updated?.length) {
     console.log("[Stripe webhook] already processed", {
       leadId,
@@ -62,6 +66,7 @@ async function handleCheckoutPaid(event: Stripe.Event) {
     where id = ${leadId};
   `;
 
+  // 1bis) Create pending documents for this paid lead (idempotent)
   await sql`
   insert into lead_documents (lead_id, doc_type, status)
   values
@@ -70,6 +75,7 @@ async function handleCheckoutPaid(event: Stripe.Event) {
   on conflict (lead_id, doc_type) do nothing;
 `;
 
+  // 2) Recharge les infos lead pour email
   const rows = await sql`
     select
       email,
@@ -88,16 +94,12 @@ async function handleCheckoutPaid(event: Stripe.Event) {
   const lead = rows?.[0];
   if (!lead) return;
 
-  await sendLeadEmails(String(leadId), {
-    email: lead.email,
-    notes: lead.notes,
-    pack: lead.pack,
-    speed: lead.speed,
-    priceEUR: lead.price_eur,
-    brief: lead.brief,
-    selectedPlan: lead.selected_plan,
-    createdAt: new Date(lead.client_created_at).toISOString(),
-  } as any);
+  await sendPaymentConfirmedEmails({
+    leadId: String(leadId),
+    email: String(lead.email),
+    destination: String(lead?.brief?.destination || ""),
+    priceEUR: Number(lead.price_eur || 0),
+  });
 }
 
 export async function POST(req: Request) {
@@ -128,10 +130,12 @@ export async function POST(req: Request) {
   }
 
   try {
+    // Events "paid"
     if (event.type === "checkout.session.completed") {
       await handleCheckoutPaid(event);
     }
 
+    // Optionnel (paiements async)
     if (event.type === "checkout.session.async_payment_succeeded") {
       await handleCheckoutPaid(event);
     }
@@ -139,6 +143,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ received: true }, { status: 200 });
   } catch (err) {
     console.error("[Stripe webhook] handler error:", err);
+    // Stripe va retenter sur 5xx -> OK si idempotent
     return NextResponse.json({ ok: false }, { status: 500 });
   }
 }
