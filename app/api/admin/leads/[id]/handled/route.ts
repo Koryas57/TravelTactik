@@ -64,24 +64,24 @@ export async function POST(_req: NextRequest, ctx: Ctx) {
         );
       }
 
-      // Vérifie que les 3 docs sont READY + URL
+      // Vérifie que le document Tarifs est READY + URL (Carnet facultatif)
       const docsCountRows = await sql`
         select count(*)::int as ready_count
         from lead_documents
         where lead_id = ${id}::uuid
-          and doc_type in ('tarifs','descriptif','carnet')
+          and doc_type = 'tarifs'
           and status = 'ready'
           and url is not null
           and length(trim(url)) > 0;
       `;
       const readyCount = docsCountRows?.[0]?.ready_count ?? 0;
 
-      if (readyCount < 3) {
+      if (readyCount < 1) {
         return NextResponse.json(
           {
             ok: false,
             error:
-              "Documents incomplets: les 3 documents doivent être en 'ready' avec une URL avant de marquer comme traité.",
+              "Document Tarifs manquant: le PDF Tarifs doit être en 'ready' avec une URL avant de marquer comme traité. Le Carnet de voyage reste facultatif.",
           },
           { status: 400 },
         );

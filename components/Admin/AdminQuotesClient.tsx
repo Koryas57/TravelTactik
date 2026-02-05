@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import styles from "./AdminLeads.module.scss";
+import Link from "next/link";
 
 type Row = {
   user_id: string;
@@ -55,8 +56,17 @@ export function AdminQuotesClient() {
             Prépare puis publie les Synthèses & Devis pour les utilisateurs
             ayant un Espace Client.
           </p>
+          <p style={{ marginTop: 8 }}>
+            <Link href="/admin/leads" style={{ fontWeight: 700 }}>
+              Ouvrir Leads & Documents →
+            </Link>
+          </p>
+          <p style={{ marginTop: 8 }}>
+            <Link href="/admin/offers" style={{ fontWeight: 700 }}>
+              Ouvrir l'éditeur d'offres →
+            </Link>
+          </p>
         </div>
-
         <button className={styles.refresh} onClick={load} disabled={loading}>
           {loading ? "Chargement..." : "Rafraîchir"}
         </button>

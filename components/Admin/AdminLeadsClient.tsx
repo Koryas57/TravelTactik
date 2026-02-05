@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import styles from "./AdminLeads.module.scss";
 
-type DocType = "tarifs" | "descriptif" | "carnet";
+type DocType = "tarifs" | "carnet";
 type DocStatus = "pending" | "ready";
 
 type LeadDoc = {
@@ -183,40 +183,38 @@ export function AdminLeadsClient() {
                   <td>{r.speed}</td>
                   <td>{r.price_eur}€</td>
                   <td>{r.payment_status || "—"}</td>
-                  <td>{r.handled ? "Oui" : "Non"}</td>
                   <td>
                     {r.payment_status !== "paid" ? (
                       <span className={styles.muted}>—</span>
                     ) : (
                       <div style={{ display: "grid", gap: 8, minWidth: 240 }}>
-                        {(["tarifs", "descriptif", "carnet"] as const).map(
-                          (t) => {
-                            const doc = (r.documents || []).find(
-                              (d) => d.doc_type === t,
-                            ) || {
-                              doc_type: t,
-                              status: "pending" as const,
-                              url: null,
-                            };
+                        {(["tarifs", "carnet"] as const).map((t) => {
+                          const doc = (r.documents || []).find(
+                            (d) => d.doc_type === t,
+                          ) || {
+                            doc_type: t,
+                            status: "pending" as const,
+                            url: null,
+                          };
 
-                            return (
-                              <DocEditor
-                                key={t}
-                                leadId={r.id}
-                                docType={t}
-                                initialStatus={doc.status}
-                                initialUrl={doc.url || ""}
-                                onSave={async (args) => {
-                                  await upsertDoc(args);
-                                  await load();
-                                }}
-                              />
-                            );
-                          },
-                        )}
+                          return (
+                            <DocEditor
+                              key={t}
+                              leadId={r.id}
+                              docType={t}
+                              initialStatus={doc.status}
+                              initialUrl={doc.url || ""}
+                              onSave={async (args) => {
+                                await upsertDoc(args);
+                                await load();
+                              }}
+                            />
+                          );
+                        })}
                       </div>
                     )}
                   </td>
+                  <td>{r.handled ? "Oui" : "Non"}</td>
                   <td>
                     <button
                       className={styles.smallBtn}
@@ -238,7 +236,7 @@ export function AdminLeadsClient() {
             {!rows.length && !loading ? (
               <tr>
                 <td colSpan={10} className={styles.empty}>
-                  Aucun résultat.
+                  Aucun rsultat.
                 </td>
               </tr>
             ) : null}
@@ -271,12 +269,7 @@ function DocEditor({
   const [url, setUrl] = useState(initialUrl);
   const [saving, setSaving] = useState(false);
 
-  const label =
-    docType === "tarifs"
-      ? "Tarifs"
-      : docType === "descriptif"
-        ? "Descriptif"
-        : "Carnet";
+  const label = docType === "tarifs" ? "Tarifs" : "Carnet";
 
   async function save() {
     try {
@@ -303,7 +296,7 @@ function DocEditor({
       fd.set("file", file);
       fd.set("leadId", leadId);
       fd.set("docType", docType);
-      fd.set("name", `${leadId}_${docType}.pdf`); // optionnel (si endpoint l’utilise encore)
+      fd.set("name", `${leadId}_${docType}.pdf`);
 
       const res = await fetch("/api/admin/uploads", {
         method: "POST",
@@ -362,7 +355,7 @@ function DocEditor({
         disabled={!file || saving}
         style={{ marginTop: 8 }}
       >
-        {saving ? "Upload…" : "Uploader PDF"}
+        {saving ? "Upload…" : "Uploader / Remplacer PDF"}
       </button>
 
       <input

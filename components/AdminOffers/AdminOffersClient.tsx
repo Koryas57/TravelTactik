@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import styles from "./AdminOffers.module.scss";
+import Link from "next/link";
 
 const CATEGORIES = [
   "",
@@ -300,6 +301,9 @@ function CreateOffer({
           <div className={styles.createSub}>
             Crée la card, puis complète les détails juste en dessous.
           </div>
+          <Link href="/admin/leads" style={{ fontWeight: 700 }}>
+            Vers l'éditeur de Leads & PDF →
+          </Link>
         </div>
 
         <button
