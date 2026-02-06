@@ -23,6 +23,7 @@ export function QuoteCard({
   status,
 }: Props) {
   const [loading, setLoading] = useState(false);
+  const [acceptedCgv, setAcceptedCgv] = useState(false);
   const [acceptedLegal, setAcceptedLegal] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -85,6 +86,22 @@ export function QuoteCard({
         >
           <input
             type="checkbox"
+            checked={acceptedCgv}
+            onChange={(e) => setAcceptedCgv(e.target.checked)}
+          />
+          <span>J&apos;accepte les Conditions Générales de Vente (CGV).</span>
+        </label>
+
+        <label
+          style={{
+            display: "flex",
+            gap: 10,
+            alignItems: "flex-start",
+            marginTop: 10,
+          }}
+        >
+          <input
+            type="checkbox"
             checked={acceptedLegal}
             onChange={(e) => setAcceptedLegal(e.target.checked)}
           />
@@ -98,7 +115,7 @@ export function QuoteCard({
           type="button"
           className={styles.payBtn}
           onClick={pay}
-          disabled={!acceptedLegal || loading}
+          disabled={!acceptedCgv || !acceptedLegal || loading}
           style={{ marginTop: 12 }}
         >
           {loading ? "Redirection..." : "J'accepte le devis / Payer"}

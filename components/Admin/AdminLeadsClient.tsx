@@ -27,6 +27,12 @@ type LeadRow = {
   documents: LeadDoc[];
 };
 
+function paymentStatusLabel(status: string | null) {
+  if (status === "paid") return "Paiement reçu";
+  if (status === "pending") return "En attente";
+  return status || "—";
+}
+
 export function AdminLeadsClient() {
   const [rows, setRows] = useState<LeadRow[]>([]);
   const [loading, setLoading] = useState(false);
@@ -135,8 +141,8 @@ export function AdminLeadsClient() {
           <span>Paiement</span>
           <select value={status} onChange={(e) => setStatus(e.target.value)}>
             <option value="">Tous</option>
-            <option value="paid">Paid</option>
-            <option value="pending">Pending</option>
+            <option value="paid">Paiement reçu</option>
+            <option value="pending">En attente</option>
           </select>
         </label>
 
@@ -182,7 +188,7 @@ export function AdminLeadsClient() {
                   <td>{r.pack}</td>
                   <td>{r.speed}</td>
                   <td>{r.price_eur}€</td>
-                  <td>{r.payment_status || "—"}</td>
+                  <td>{paymentStatusLabel(r.payment_status)}</td>
                   <td>
                     {r.payment_status !== "paid" ? (
                       <span className={styles.muted}>—</span>
@@ -236,7 +242,7 @@ export function AdminLeadsClient() {
             {!rows.length && !loading ? (
               <tr>
                 <td colSpan={10} className={styles.empty}>
-                  Aucun rsultat.
+                  Aucun résultat.
                 </td>
               </tr>
             ) : null}

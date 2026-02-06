@@ -37,8 +37,13 @@ function toDocMap(documents: LeadDoc[]) {
 
 export function PlanCard(props: Props) {
   const isPaid = props.paymentStatus === "paid";
+  const paymentLabel =
+    props.paymentStatus === "paid"
+      ? "Paiement reçu"
+      : props.paymentStatus || "—";
   const docMap = toDocMap(props.documents);
 
+  // fallback “premium” sans images réelles pour l’instant
   const bgClass =
     props.pack === "concierge"
       ? styles.bgPremium
@@ -52,7 +57,7 @@ export function PlanCard(props: Props) {
         <div className={styles.mediaOverlay} />
         <div className={styles.mediaTop}>
           <div className={styles.destination}>{props.destination}</div>
-          <span className={styles.badge}>{props.paymentStatus || "—"}</span>
+          <span className={styles.badge}>{paymentLabel}</span>
         </div>
 
         <div className={styles.mediaBottom}>

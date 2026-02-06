@@ -23,11 +23,4 @@ export default async function AppHome() {
   );
 }
 
-// Mon espace à terminer avec le header et le footer
-// Ajouter un lien de déconnexion
-// Afficher l'email de l'utilisateur connecté
-// Ajouter des styles pour rendre la page plus attrayante, card de navigation avec icônes vers les différentes sections (plans de voyage, profil, favoris, etc.)
-// Utiliser des icônes pour chaque lien de navigation sur mobile
-// Ajouter une section pour les notifications ou messages récents
-// Ajouter un lien vers les paramètres du compte (Mon profil)
-// Ajouter un lien vers l'aide ou le support client
+// Ajouter une systeme de notifications ou messages récents
