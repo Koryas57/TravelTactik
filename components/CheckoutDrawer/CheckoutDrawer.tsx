@@ -1,10 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import styles from "./CheckoutDrawer.module.scss";
 import type { ComfortLevel, TripBrief } from "../tripBrief";
-import { comfortLabels } from "../tripBrief";
 
 type Props = {
   open: boolean;
@@ -13,11 +13,8 @@ type Props = {
   selectedPlan: ComfortLevel | null;
 };
 
-type TabKey = "call" | "how";
-
-export function CheckoutDrawer({ open, onClose, brief, selectedPlan }: Props) {
+export function CheckoutDrawer({ open, onClose }: Props) {
   const panelRef = useRef<HTMLDivElement | null>(null);
-  const [tab, setTab] = useState<TabKey>("call");
 
   // ESC closes
   useEffect(() => {
@@ -42,7 +39,6 @@ export function CheckoutDrawer({ open, onClose, brief, selectedPlan }: Props) {
   // focus on open
   useEffect(() => {
     if (!open) return;
-    setTab("call");
     const el = panelRef.current?.querySelector<HTMLAnchorElement>(
       'a[data-primary-cta="true"]',
     );
@@ -50,11 +46,6 @@ export function CheckoutDrawer({ open, onClose, brief, selectedPlan }: Props) {
   }, [open]);
 
   if (!open) return null;
-
-  const comfortText = selectedPlan ? comfortLabels[selectedPlan] : "Confort";
-  const destinationText = brief?.destination?.trim()
-    ? brief.destination.trim()
-    : "Destination à définir";
 
   return (
     <div
@@ -73,7 +64,16 @@ export function CheckoutDrawer({ open, onClose, brief, selectedPlan }: Props) {
       <div className={styles.panel} ref={panelRef}>
         <div className={styles.top}>
           <div>
-            <div className={styles.kicker}>TravelTactik</div>
+            <div className={styles.brand}>
+              <Image
+                className={styles.brandLogoImage}
+                src="/images/LogoTravel.png"
+                alt="Logo TravelTactik"
+                width={44}
+                height={55}
+              />
+              <span className={styles.brandText}>TRAVEL TACTIK</span>
+            </div>
             <div className={styles.title}>Appel découverte gratuit</div>
             <div className={styles.sub}>
               Un créneau. Un cadrage clair. Un plan d’action.
@@ -90,100 +90,75 @@ export function CheckoutDrawer({ open, onClose, brief, selectedPlan }: Props) {
           </button>
         </div>
 
-        <div className={styles.tabs} role="tablist" aria-label="Onglets">
-          <button
-            type="button"
-            className={`${styles.tab} ${tab === "call" ? styles.tabActive : ""}`}
-            onClick={() => setTab("call")}
-            role="tab"
-            aria-selected={tab === "call"}
-          >
-            Réserver l’appel
-          </button>
-          <button
-            type="button"
-            className={`${styles.tab} ${tab === "how" ? styles.tabActive : ""}`}
-            onClick={() => setTab("how")}
-            role="tab"
-            aria-selected={tab === "how"}
-          >
-            Process
-          </button>
-        </div>
+        <div className={styles.howCard}>
+          <div className={styles.cardTitle}>Notre méthode 💡</div>
 
-        {tab === "how" ? (
-          <div className={styles.howCard}>
-            <div className={styles.cardTitle}>Comment ça marche</div>
-            <ol className={styles.howList}>
-              <li>Appel découverte</li>
-              <li>Étude & devis</li>
-              <li>Organisation</li>
-              <li>Réservation</li>
-              <li>Carnet de voyage</li>
-              <li>Bon voyage</li>
-            </ol>
+          <ol className={styles.steps}>
+            <li className={styles.step}>
+              <div className={styles.stepTitle}>1. Premier contact gratuit</div>
+              <div className={styles.stepText}>
+                Message ou appel de 30 min max pour cadrer ton projet.
+              </div>
+            </li>
+            <li className={styles.step}>
+              <div className={styles.stepTitle}>
+                2. Synthèse + devis dans ton espace
+              </div>
+              <div className={styles.stepText}>
+                Tu reçois une synthèse claire et un devis peu après l’échange,
+                avec notification par email.
+              </div>
+            </li>
+            <li className={styles.step}>
+              <div className={styles.stepTitle}>
+                3. Devis en attente d’acceptation (7 jours)
+              </div>
+              <div className={styles.stepText}>
+                Le devis reste valable 7 jours pour valider la suite.
+              </div>
+            </li>
+            <li className={styles.step}>
+              <div className={styles.stepTitle}>
+                4. Paiement requis pour les liens de réservation
+              </div>
+              <div className={styles.stepText}>
+                Le PDF Tarifs contiendra les liens aux prix négociés.
+              </div>
+            </li>
+            <li className={styles.step}>
+              <div className={styles.stepTitle}>
+                5. PDF Tarifs en &lt; 24h après paiement
+              </div>
+              <div className={styles.stepText}>
+                Tu télécharges le PDF Tarifs et effectues tes réservations aux
+                prix convenus.
+              </div>
+            </li>
+            <li className={styles.step}>
+              <div className={styles.stepTitle}>
+                6. Carnet de voyage (optionnel)
+              </div>
+              <div className={styles.stepText}>
+                Si tu as choisi le carnet et l’as payé, tu le reçois dans les
+                délais convenus.
+              </div>
+            </li>
+          </ol>
+
+          <div className={styles.howNote}>
+            Dès qu’un document est disponible dans ton espace client, tu reçois
+            automatiquement une notification par email.
           </div>
-        ) : (
-          <>
-            <div className={styles.card}>
-              <div className={styles.cardTitle}>Ton contexte (optionnel)</div>
 
-              <div className={styles.chips}>
-                <span className={styles.chip}>{destinationText}</span>
-                <span className={styles.chip}>Niveau : {comfortText}</span>
-                {brief?.travelers ? (
-                  <span className={styles.chip}>
-                    {brief.travelers} voyageur(s)
-                  </span>
-                ) : null}
-                {brief?.durationDays ? (
-                  <span className={styles.chip}>
-                    {brief.durationDays} jours
-                  </span>
-                ) : null}
-              </div>
-
-              <p className={styles.cardText}>
-                L’appel sert à cadrer les priorités (budget, rythme, dates,
-                contraintes) pour avancer vite et sans flou.
-              </p>
-
-              <div className={styles.actions}>
-                <Link
-                  href="/appel-decouverte"
-                  className={styles.primaryBtn}
-                  data-primary-cta="true"
-                  onClick={onClose}
-                >
-                  Ouvrir le calendrier
-                </Link>
-                <Link
-                  href="/offres"
-                  className={styles.secondaryBtn}
-                  onClick={onClose}
-                >
-                  Voir les offres
-                </Link>
-              </div>
-
-              <div className={styles.micro}>
-                Confirmation + invitation agenda envoyées automatiquement après
-                réservation.
-              </div>
-            </div>
-
-            <div className={styles.card}>
-              <div className={styles.cardTitle}>Ce que tu obtiens</div>
-              <ul className={styles.bullets}>
-                <li>Un cadrage clair (priorités, contraintes, budget)</li>
-                <li>Une direction : Éco / Confort / Premium</li>
-                <li>
-                  Une stratégie de recherche adaptée (transport + hébergement)
-                </li>
-              </ul>
-            </div>
-          </>
-        )}
+          <Link
+            href="/appel-decouverte"
+            className={`${styles.primaryBtn} ${styles.ctaBounce}`}
+            data-primary-cta="true"
+            onClick={onClose}
+          >
+            J’ai compris, je passe à l’action →
+          </Link>
+        </div>
       </div>
     </div>
   );
