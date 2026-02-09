@@ -195,7 +195,7 @@ export function HeaderMenu({ openCheckout }: Props) {
                   </Link>
                   <Link
                     className={styles.link}
-                    href="/app/profile"
+                    href="/app/profil"
                     onClick={close}
                   >
                     Mon profil

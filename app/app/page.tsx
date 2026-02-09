@@ -16,7 +16,7 @@ export default async function AppHome() {
       <div className={style.mySpaceNav}>
         <Link href="/app/plans">➡️ Mes plans de voyage 🗺️</Link>
         <Link href="/app/synthese-et-devis">➡️ Synthèse et Devis 📃</Link>
-        <Link href="/app/profile">➡️ Mon profil 🪪</Link>
+        <Link href="/app/profil">➡️ Mon profil 🪪</Link>
         <Link href="/app/favorites">➡️ Mes favoris ⭐</Link>
       </div>
     </main>
