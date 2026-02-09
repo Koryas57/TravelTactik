@@ -196,7 +196,7 @@ export function TravelBookletGallery({
                 {active.subtitle ? (
                   <span className={styles.topSubtitle}>
                     {" "}
-                    — {active.subtitle}
+                    ➜ {active.subtitle}
                   </span>
                 ) : null}
               </div>

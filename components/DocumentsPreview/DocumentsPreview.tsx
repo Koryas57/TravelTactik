@@ -9,11 +9,14 @@ const BOOKLETS = [
     subtitle: "Exemple sur 7 jours",
     tag: "Polynésie",
     cover: {
-      src: "/images/booklets/PolynesieIpad.png",
+      src: "/images/booklets/DOMTOM/Polynesie/borabora.png",
       alt: "Couverture Polynésie",
     },
     pages: [
-      { src: "/booklets/polynesie/01.jpg", alt: "Polynésie page 1" },
+      {
+        src: "/images/booklets/DOMTOM/Polynesie/borabora.png",
+        alt: "Polynésie page 1",
+      },
       { src: "/booklets/polynesie/02.jpg", alt: "Polynésie page 2" },
       { src: "/booklets/polynesie/03.jpg", alt: "Polynésie page 3" },
       { src: "/booklets/polynesie/04.jpg", alt: "Polynésie page 4" },
@@ -24,9 +27,12 @@ const BOOKLETS = [
     title: "New York",
     subtitle: "Exemple pour City-trip",
     tag: "New York",
-    cover: { src: "/images/booklets/usaIpad.png", alt: "Couverture New York" },
+    cover: {
+      src: "/images/booklets/USA/manhattan.png",
+      alt: "Couverture New York",
+    },
     pages: [
-      { src: "/booklets/newyork/01.jpg", alt: "New York page 1" },
+      { src: "/images/booklets/USA/manhattan.png", alt: "Manhattan page 1" },
       { src: "/booklets/newyork/02.jpg", alt: "New York page 2" },
       { src: "/booklets/newyork/03.jpg", alt: "New York page 3" },
       { src: "/booklets/newyork/04.jpg", alt: "New York page 4" },
@@ -38,11 +44,14 @@ const BOOKLETS = [
     subtitle: "Exemple pour Aventure",
     tag: "La Réunion",
     cover: {
-      src: "/images/booklets/lareunion.jpg",
+      src: "/images/booklets/DOMTOM/Reunion/lareunion.png",
       alt: "Couverture La Réunion",
     },
     pages: [
-      { src: "/booklets/lareunion/01.jpg", alt: "La Réunion page 1" },
+      {
+        src: "/images/booklets/DOMTOM/Reunion/lareunion.png",
+        alt: "La Réunion page 1",
+      },
       { src: "/booklets/lareunion/02.jpg", alt: "La Réunion page 2" },
       { src: "/booklets/lareunion/03.jpg", alt: "La Réunion page 3" },
       { src: "/booklets/lareunion/04.jpg", alt: "La Réunion page 4" },
@@ -54,11 +63,14 @@ const BOOKLETS = [
     subtitle: "Exemple pour City-trip",
     tag: "Barcelone",
     cover: {
-      src: "/images/booklets/barcelone.jpg",
+      src: "/images/booklets/BarceloneCover.png",
       alt: "Couverture Barcelone",
     },
     pages: [
-      { src: "/booklets/barcelone/01.jpg", alt: "Barcelone page 1" },
+      {
+        src: "/images/booklets/Espagne/Barcelone/BarceloneCover.png",
+        alt: "Barcelone Cover",
+      },
       { src: "/booklets/barcelone/02.jpg", alt: "Barcelone page 2" },
       { src: "/booklets/barcelone/03.jpg", alt: "Barcelone page 3" },
       { src: "/booklets/barcelone/04.jpg", alt: "Barcelone page 4" },
