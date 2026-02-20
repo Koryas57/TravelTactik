@@ -17,14 +17,10 @@ export default function MentionsLegalesPage() {
       <p>
         <strong>Travel Tactik</strong>
         <br />
-        Exploitant : <strong>Yacine Nezreg</strong> – Entrepreneur individuel
+        Exploitant : <strong>Monsieur Yacine Nezreg</strong> – Entrepreneur
+        individuel
         <br />
         SIRET : <strong>988 707 378 00010</strong>
-        <br />
-        Adresse :{" "}
-        <strong>
-          117 Le Domaine de la Mer, 13960 Sausset-les-Pins, France
-        </strong>
         <br />
         Contact :{" "}
         <a href="mailto:traveltactik@gmail.com">traveltactik@gmail.com</a>
@@ -32,7 +28,7 @@ export default function MentionsLegalesPage() {
 
       <h2>Responsable de la publication</h2>
       <p>
-        <strong>Yacine Nezreg</strong>
+        <strong>Monsieur Yacine Nezreg</strong>
       </p>
 
       <h2>Hébergement</h2>

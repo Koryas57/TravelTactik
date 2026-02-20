@@ -22,14 +22,9 @@ export default function CgvPage() {
       <h2>2. Identité du vendeur</h2>
       <p>
         <strong>Travel Tactik</strong> — Exploitant :{" "}
-        <strong>Yacine Nezreg</strong>, Entrepreneur individuel
+        <strong>Monsieur Yacine Nezreg</strong>, Entrepreneur individuel
         <br />
         SIRET : <strong>988 707 378 00010</strong>
-        <br />
-        Adresse :{" "}
-        <strong>
-          117 Le Domaine de la Mer, 13960 Sausset-les-Pins, France
-        </strong>
         <br />
         Contact :{" "}
         <a href="mailto:traveltactik@gmail.com">traveltactik@gmail.com</a>
